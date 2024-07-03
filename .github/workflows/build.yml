@@ -5,11 +5,13 @@ on:
       - 'src/**'
       - 'test/**'
       - 'package.json'
+      - 'tsconfig.json'
   pull_request:
     paths:
       - 'src/**'
       - 'test/**'
       - 'package.json'
+      - 'tsconfig.json'
 
 jobs:
   Ubuntu:
