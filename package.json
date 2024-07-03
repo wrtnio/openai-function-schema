@@ -29,13 +29,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nestia/fetcher": "^3.4.0",
-    "@samchon/openapi": "^0.2.2"
+    "@nestia/fetcher": "^3.4.1",
+    "@samchon/openapi": "^0.3.0"
   },
   "devDependencies": {
-    "@nestia/core": "^3.4.0",
+    "@nestia/core": "^3.4.1",
     "@nestia/e2e": "^0.6.0",
-    "@nestia/sdk": "^3.4.0",
+    "@nestia/sdk": "^3.4.1",
     "@nestjs/common": "^10.3.10",
     "@nestjs/core": "^10.3.10",
     "@nestjs/platform-express": "^10.3.10",
@@ -51,7 +51,7 @@
     "ts-patch": "^3.2.1",
     "typescript": "5.5.2",
     "typescript-transform-paths": "^3.4.7",
-    "typia": "^6.3.3",
+    "typia": "^6.4.0",
     "uuid": "^10.0.0"
   },
   "files": [

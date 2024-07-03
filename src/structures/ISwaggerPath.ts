@@ -1,6 +1,6 @@
-import { ISwaggerOperation } from "./ISwaggerOperation";
+import { OpenApi } from "@samchon/openapi";
 
-export type ISwaggerPath = {
-  summary?: string;
-  description?: string;
-} & Partial<Record<ISwaggerOperation.Method, ISwaggerOperation>>;
+import { ISwaggerOperation } from "./ISwaggerOperation";
+import { ISwaggerSchema } from "./ISwaggerSchema";
+
+export type ISwaggerPath = OpenApi.IPath<ISwaggerSchema, ISwaggerOperation>;

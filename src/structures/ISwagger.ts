@@ -1,8 +1,7 @@
-import { OpenApi } from "@samchon/openapi";
-import { tags } from "typia";
+import { OpenApi, OpenApiV3_1 } from "@samchon/openapi";
 
-import { ISwaggerComponents } from "./ISwaggerComponents";
-import { ISwaggerPath } from "./ISwaggerPath";
+import { ISwaggerOperation } from "./ISwaggerOperation";
+import { ISwaggerSchema } from "./ISwaggerSchema";
 
 /**
  * Swagger Document.
@@ -36,68 +35,4 @@ import { ISwaggerPath } from "./ISwaggerPath";
  *
  * @author Samchon
  */
-export interface ISwagger {
-  /**
-   * The version of the OpenAPI document.
-   *
-   * Nestia always generate OpenAPI 3.1.x document.
-   */
-  openapi: `3.1.${number}`;
-
-  /**
-   * List of servers that provide the API.
-   */
-  servers?: OpenApi.IServer[] & tags.MinItems<1>;
-
-  /**
-   * Information about the API.
-   */
-  info?: OpenApi.IDocument.IInfo;
-
-  /**
-   * The available paths and operations for the API.
-   *
-   * The 1st key is the path, and the 2nd key is the HTTP method.
-   */
-  paths?: Record<string, ISwaggerPath>;
-
-  /**
-   * An object to hold Webhooks.
-   */
-  webhooks?: Record<string, ISwaggerPath>;
-
-  /**
-   * An object to hold reusable data structures.
-   *
-   * It stores both DTO schemas and security schemes.
-   *
-   * For reference, `nestia` defines every object and alias types as reusable DTO
-   * schemas. The alias type means that defined by `type` keyword in TypeScript.
-   */
-  components: ISwaggerComponents;
-
-  /**
-   * A declaration of which security mechanisms can be used across the API.
-   *
-   * When this property be configured, it would be overwritten in every API routes.
-   *
-   * For reference, key means the name of security scheme and value means the `scopes`.
-   * The `scopes` can be used only when target security scheme is `oauth2` type,
-   * especially for {@link ISwaggerSecurityScheme.IOAuth2.IFlow.scopes} property.
-   */
-  security?: Record<string, string[]>[];
-
-  /**
-   * List of tag names with description.
-   *
-   * It is possible to omit this property or skip some tag name even if
-   * the tag name is used in the API routes. In that case, the tag name
-   * would be displayed (in Swagger-UI) without description.
-   */
-  tags?: OpenApi.IDocument.ITag[];
-
-  /**
-   * Flag for indicating this document is emended by `@samchon/openapi`.
-   */
-  "x-samchon-emended": true;
-}
+export type ISwagger = OpenApi.IDocument<ISwaggerSchema, ISwaggerOperation>;

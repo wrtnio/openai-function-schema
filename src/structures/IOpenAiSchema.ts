@@ -204,11 +204,15 @@ export namespace IOpenAiSchema {
     pattern?: string;
 
     /**
+     * Minimum length restriction.
+     *
      * @type uint64
      */
     minLength?: number;
 
     /**
+     * Maximum length restriction.
+     *
      * @type uint64
      */
     maxLength?: number;
@@ -252,7 +256,7 @@ export namespace IOpenAiSchema {
     /**
      * Unique items restriction.
      *
-     * If this property value is `true`, target array should must unique items.
+     * If this property value is `true`, target array must have unique items.
      */
     uniqueItems?: boolean;
 
@@ -341,20 +345,6 @@ export namespace IOpenAiSchema {
      * - `IOpenAiSchema`: `Record<string, T>`
      */
     additionalProperties?: boolean | IOpenAiSchema;
-
-    /**
-     * Minimum properties restriction.
-     *
-     * Restriction of minimum number of properties in the object.
-     */
-    minProperties?: number;
-
-    /**
-     * Maximum properties restriction.
-     *
-     * Restriction of maximum number of properties in the object.
-     */
-    maxProperties?: number;
   }
 
   /**
@@ -363,6 +353,9 @@ export namespace IOpenAiSchema {
    * It means the type of the value is `any`.
    */
   export interface IUnknown extends __IAttribute {
+    /**
+     * Type is never be defined.
+     */
     type?: undefined;
   }
 

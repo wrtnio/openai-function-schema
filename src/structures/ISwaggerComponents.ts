@@ -11,19 +11,4 @@ import { ISwaggerSchema } from "./ISwaggerSchema";
  *
  * @author Samchon
  */
-export interface ISwaggerComponents {
-  /**
-   * An object to hold reusable DTO schemas.
-   *
-   * For reference, `nestia` stores every object and alias types as reusable DTO
-   * schemas. The alias type means that defined by `type` keyword in TypeScript.
-   */
-  schemas?: Record<string, ISwaggerSchema>;
-
-  /**
-   * An object to hold reusable security schemes.
-   *
-   * This property be configured by user in `nestia.config.ts` file.
-   */
-  securitySchemes?: Record<string, OpenApi.ISecurityScheme>;
-}
+export type ISwaggerComponents = OpenApi.IComponents<ISwaggerSchema>;

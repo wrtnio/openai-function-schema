@@ -1,15 +1,12 @@
-import { ISwaggerMigrateRoute } from "./ISwaggerMigrateRoute";
-import { ISwaggerOperation } from "./ISwaggerOperation";
+import { IMigrateDocument } from "@samchon/openapi";
 
-export interface ISwaggerMigrate {
-  routes: ISwaggerMigrateRoute[];
-  errors: ISwaggerMigrate.IError[];
-}
+import { ISwaggerOperation } from "./ISwaggerOperation";
+import { ISwaggerSchema } from "./ISwaggerSchema";
+
+export type ISwaggerMigrate = IMigrateDocument<
+  ISwaggerSchema,
+  ISwaggerOperation
+>;
 export namespace ISwaggerMigrate {
-  export interface IError {
-    operation: () => ISwaggerOperation;
-    method: "head" | "get" | "post" | "put" | "patch" | "delete";
-    path: string;
-    messages: string[];
-  }
+  export type IError = IMigrateDocument.IError<ISwaggerSchema>;
 }
