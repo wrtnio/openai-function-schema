@@ -62,10 +62,10 @@ main().catch(console.error);
 
 ## Features
 - Functions
-  - [`OpenAiComposer`](): Compose `IOpenAiDocument` from Swagger (OpenAPI) document
-  - `OpenAiFetcher`: Function call executor with `IOpenAiFunction`
-  - `OpenAiTypeChecker`: Type checker for `IOpenAiSchema`
+  - [`OpenAiComposer`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/OpenAiComposer.ts): Compose `IOpenAiDocument` from Swagger (OpenAPI) document
+  - [`OpenAiFetcher`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/OpenAiFetcher.ts): Function call executor with `IOpenAiFunction`
+  - [`OpenAiTypeChecker`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/OpenAiTypeChecker.ts): Type checker for `IOpenAiSchema`
 - Structures
-  - [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts)
-  - [`IOpenAiFunction`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiFunction.ts)
-  - [`IOpenAiSchema`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiSchema.ts)
+  - [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts): OpenAI function metadata collection with options
+  - [`IOpenAiFunction`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiFunction.ts): OpenAI's function metadata
+  - [`IOpenAiSchema`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiSchema.ts): Type schema info escaped `$ref`.
