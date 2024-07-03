@@ -1,5 +1,5 @@
 # OpenAI Function Schema
-![Wrtn Technologies](https://private-user-images.githubusercontent.com/13158709/321905275-37201d90-b961-4d6d-a1e4-98158a810a36.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTk5ODA3NDQsIm5iZiI6MTcxOTk4MDQ0NCwicGF0aCI6Ii8xMzE1ODcwOS8zMjE5MDUyNzUtMzcyMDFkOTAtYjk2MS00ZDZkLWExZTQtOTgxNThhODEwYTM2LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MDMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzAzVDA0MjA0NFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTZiOTJkMzc2YTFjZDI0OWVlZjI1Njc5NTQ2MWM3ODg5YjNmNTZkOTY5YjQ1YzRhZTc5MWQxNDczZjQ2OGZiNmImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.hItP1U2rwwgjmahoCvLixia035hcgs5wo_znPgZmlrI)
+![Wrtn Technologies](https://github.com/wrtnio/openai-function-schema/assets/13158709/48ee1578-f7cd-4e64-abd9-8354716ec0c9)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/wrtnio/openai-function/blob/master/LICENSE)
 [![npm version](https://badge.fury.io/js/@wrtnio/openai-function-schema.svg)](https://www.npmjs.com/package/@wrtnio/openai-function-schema)
