@@ -12,14 +12,15 @@ const main = async (): Promise<void> => {
   const app = await NestFactory.create(TestModule, { logger: false });
   await app.listen(3_000);
 
+  typia.assertGuard<ISwagger>(swagger);
   const keyword = OpenAiComposer.compose({
-    swagger: typia.assert<ISwagger>(swagger),
+    swagger,
     options: {
       keyword: true,
     },
   });
   const positional = OpenAiComposer.compose({
-    swagger: swagger as ISwagger,
+    swagger,
     options: {
       keyword: false,
     },
@@ -31,7 +32,7 @@ const main = async (): Promise<void> => {
     parameters: () => [
       {
         connection: { host: `http://localhost:3000` },
-        swagger: swagger as ISwagger,
+        swagger: typia.assert<ISwagger>(swagger),
         document: (type) => (type === "keyword" ? keyword : positional),
         function: (type) => {
           const document = type === "keyword" ? keyword : positional;
