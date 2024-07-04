@@ -1,0 +1,1990 @@
+{
+  "openapi": "3.0.3",
+  "functions": [
+    {
+      "method": "post",
+      "path": "/bbs/articles",
+      "name": "bbs_articles_post",
+      "parameters": [
+        {
+          "type": "object",
+          "properties": {
+            "writer": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "txt",
+                "md",
+                "html"
+              ],
+              "title": "Format of body",
+              "description": "Format of body.\n\nSame meaning with extension like `html`, `md`, `txt`."
+            },
+            "title": {
+              "type": "string",
+              "title": "Title of article",
+              "description": "Title of article."
+            },
+            "body": {
+              "type": "string",
+              "title": "Content body of article",
+              "description": "Content body of article."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "title": "File name, except extension",
+                    "description": "File name, except extension."
+                  },
+                  "extension": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8,
+                    "nullable": true,
+                    "title": "Extension",
+                    "description": "Extension.\n\nPossible to omit like `README` case."
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "title": "URL path of the real file",
+                    "description": "URL path of the real file."
+                  }
+                },
+                "required": [
+                  "name",
+                  "extension",
+                  "url"
+                ]
+              },
+              "title": "List of attachment files",
+              "description": "List of attachment files."
+            },
+            "password": {
+              "type": "string",
+              "title": "Password for modification",
+              "description": "Password for modification."
+            }
+          },
+          "required": [
+            "writer",
+            "format",
+            "title",
+            "body",
+            "files",
+            "password"
+          ],
+          "description": "Store content type of the article."
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Primary Key",
+            "description": "Primary Key."
+          },
+          "writer": {
+            "type": "string",
+            "title": "Writer of article",
+            "description": "Writer of article."
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of snapshot record",
+                  "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or article."
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "txt",
+                    "md",
+                    "html"
+                  ]
+                },
+                "body": {
+                  "type": "string",
+                  "title": "Content body of article",
+                  "description": "Content body of article."
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "File name, except extension",
+                        "description": "File name, except extension."
+                      },
+                      "extension": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 8,
+                        "nullable": true,
+                        "title": "Extension",
+                        "description": "Extension.\n\nPossible to omit like `README` case."
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "title": "URL path of the real file",
+                        "description": "URL path of the real file."
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "extension",
+                      "url"
+                    ]
+                  },
+                  "title": "List of attachment files",
+                  "description": "List of attachment files."
+                },
+                "title": {
+                  "type": "string",
+                  "title": "Title of article",
+                  "description": "Title of article."
+                }
+              },
+              "required": [
+                "id",
+                "created_at",
+                "format",
+                "body",
+                "files",
+                "title"
+              ],
+              "description": "Snapshot of article.\n\n`IBbsArticle.ISnapshot` is a snapshot entity that contains the contents of\nthe article, as mentioned in {@link IBbsArticle }, the contents of the article\nare separated from the article record to keep evidence and prevent fraud."
+            },
+            "minItems": 1,
+            "title": "List of snapshot contents",
+            "description": "List of snapshot contents.\n\nIt is created for the first time when an article is created, and is\naccumulated every time the article is modified."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creation time of article",
+            "description": "Creation time of article."
+          }
+        },
+        "required": [
+          "id",
+          "writer",
+          "snapshots",
+          "created_at"
+        ],
+        "description": "Article entity.\n\n`IBbsArticle* is a super-type entity of all kinds of articles in the current\nbackend system, literally shaping individual articles of the bulletin board.\n\nAnd, as you can see, the elements that must inevitably exist in the article,\nsuch as the `title` or the `body`, do not exist in the `IBbsArticle`, but exist\nin the subsidiary entity, {@link IBbsArticle.ISnapshot }, as a 1: N relationship,\nwhich is because a new snapshot record is published every time the article is\nmodified.\n\nThe reason why a new snapshot record is published every time the article is\nmodified is to preserve the evidence. Due to the nature of e-community, there\nis always a threat of dispute among the participants. And it can happen that\ndisputes arise through articles or {@link IBbsArticleComment comments}, and to\nprevent such things as modifying existing articles to manipulate the situation,\nthe article is designed in this structure.\n\nIn other words, to keep evidence, and prevent fraud."
+      },
+      "description": "Create a new article.\n\nCreate a new article with its first {@link IBbsArticle.ISnapshot snapshot}."
+    },
+    {
+      "method": "patch",
+      "path": "/bbs/articles",
+      "name": "bbs_articles_patch",
+      "parameters": [
+        {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "writer": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "title_or_body": {
+                  "type": "string"
+                },
+                "from": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "to": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "description": "검색 정보."
+            },
+            "sort": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-writer",
+                  "-title",
+                  "-created_at",
+                  "-updated_at",
+                  "+writer",
+                  "+title",
+                  "+created_at",
+                  "+updated_at"
+                ]
+              },
+              "title": "Sort condition",
+              "description": "Sort condition."
+            },
+            "page": {
+              "type": "integer",
+              "title": "Page number",
+              "description": "Page number."
+            },
+            "limit": {
+              "type": "integer",
+              "title": "Limitation of records per a page",
+              "description": "Limitation of records per a page."
+            }
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "integer",
+                "title": "Current page number",
+                "description": "Current page number."
+              },
+              "limit": {
+                "type": "integer",
+                "title": "Limitation of records per a page",
+                "description": "Limitation of records per a page."
+              },
+              "records": {
+                "type": "integer",
+                "title": "Total records in the database",
+                "description": "Total records in the database."
+              },
+              "pages": {
+                "type": "integer",
+                "title": "Total pages",
+                "description": "Total pages.\n\nEqual to {@link records } / {@link limit } with ceiling."
+              }
+            },
+            "required": [
+              "current",
+              "limit",
+              "records",
+              "pages"
+            ],
+            "description": "Page information."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "writer": {
+                  "type": "string",
+                  "title": "Writer of the article",
+                  "description": "Writer of the article."
+                },
+                "title": {
+                  "type": "string",
+                  "title": "Title of the last snapshot",
+                  "description": "Title of the last snapshot."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of the article",
+                  "description": "Creation time of the article."
+                },
+                "updated_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Modification time of the article",
+                  "description": "Modification time of the article.\n\nIn other words, the time when the last snapshot was created."
+                }
+              },
+              "required": [
+                "id",
+                "writer",
+                "title",
+                "created_at",
+                "updated_at"
+              ],
+              "description": "Summarized information of the article."
+            },
+            "title": "List of records",
+            "description": "List of records."
+          }
+        },
+        "required": [
+          "pagination",
+          "data"
+        ],
+        "description": "A page.\n\nCollection of records with pagination indformation."
+      },
+      "description": "List up all summarized articles.\n\nList up all summarized articles with pagination and searching options."
+    },
+    {
+      "method": "patch",
+      "path": "/bbs/articles/abridges",
+      "name": "bbs_articles_abridges_patch",
+      "parameters": [
+        {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "writer": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "title_or_body": {
+                  "type": "string"
+                },
+                "from": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "to": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "description": "검색 정보."
+            },
+            "sort": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-writer",
+                  "-title",
+                  "-created_at",
+                  "-updated_at",
+                  "+writer",
+                  "+title",
+                  "+created_at",
+                  "+updated_at"
+                ]
+              },
+              "title": "Sort condition",
+              "description": "Sort condition."
+            },
+            "page": {
+              "type": "integer",
+              "title": "Page number",
+              "description": "Page number."
+            },
+            "limit": {
+              "type": "integer",
+              "title": "Limitation of records per a page",
+              "description": "Limitation of records per a page."
+            }
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "integer",
+                "title": "Current page number",
+                "description": "Current page number."
+              },
+              "limit": {
+                "type": "integer",
+                "title": "Limitation of records per a page",
+                "description": "Limitation of records per a page."
+              },
+              "records": {
+                "type": "integer",
+                "title": "Total records in the database",
+                "description": "Total records in the database."
+              },
+              "pages": {
+                "type": "integer",
+                "title": "Total pages",
+                "description": "Total pages.\n\nEqual to {@link records } / {@link limit } with ceiling."
+              }
+            },
+            "required": [
+              "current",
+              "limit",
+              "records",
+              "pages"
+            ],
+            "description": "Page information."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "writer": {
+                  "type": "string",
+                  "title": "Writer of the article",
+                  "description": "Writer of the article."
+                },
+                "title": {
+                  "type": "string",
+                  "title": "Title of the last snapshot",
+                  "description": "Title of the last snapshot."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of the article",
+                  "description": "Creation time of the article."
+                },
+                "updated_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Modification time of the article",
+                  "description": "Modification time of the article.\n\nIn other words, the time when the last snapshot was created."
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "txt",
+                    "md",
+                    "html"
+                  ]
+                },
+                "body": {
+                  "type": "string",
+                  "title": "Content body of article",
+                  "description": "Content body of article."
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "File name, except extension",
+                        "description": "File name, except extension."
+                      },
+                      "extension": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 8,
+                        "nullable": true,
+                        "title": "Extension",
+                        "description": "Extension.\n\nPossible to omit like `README` case."
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "title": "URL path of the real file",
+                        "description": "URL path of the real file."
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "extension",
+                      "url"
+                    ]
+                  },
+                  "title": "List of attachment files",
+                  "description": "List of attachment files."
+                }
+              },
+              "required": [
+                "id",
+                "writer",
+                "title",
+                "created_at",
+                "updated_at",
+                "format",
+                "body",
+                "files"
+              ],
+              "description": "Abriged information of the article."
+            },
+            "title": "List of records",
+            "description": "List of records."
+          }
+        },
+        "required": [
+          "pagination",
+          "data"
+        ],
+        "description": "A page.\n\nCollection of records with pagination indformation."
+      },
+      "description": "List up all abridged articles.\n\nList up all abridged articles with pagination and searching options."
+    },
+    {
+      "method": "get",
+      "path": "/bbs/articles/{id}",
+      "name": "bbs_articles_getById",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Target article's "
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Primary Key",
+            "description": "Primary Key."
+          },
+          "writer": {
+            "type": "string",
+            "title": "Writer of article",
+            "description": "Writer of article."
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of snapshot record",
+                  "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or article."
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "txt",
+                    "md",
+                    "html"
+                  ]
+                },
+                "body": {
+                  "type": "string",
+                  "title": "Content body of article",
+                  "description": "Content body of article."
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "File name, except extension",
+                        "description": "File name, except extension."
+                      },
+                      "extension": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 8,
+                        "nullable": true,
+                        "title": "Extension",
+                        "description": "Extension.\n\nPossible to omit like `README` case."
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "title": "URL path of the real file",
+                        "description": "URL path of the real file."
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "extension",
+                      "url"
+                    ]
+                  },
+                  "title": "List of attachment files",
+                  "description": "List of attachment files."
+                },
+                "title": {
+                  "type": "string",
+                  "title": "Title of article",
+                  "description": "Title of article."
+                }
+              },
+              "required": [
+                "id",
+                "created_at",
+                "format",
+                "body",
+                "files",
+                "title"
+              ],
+              "description": "Snapshot of article.\n\n`IBbsArticle.ISnapshot` is a snapshot entity that contains the contents of\nthe article, as mentioned in {@link IBbsArticle }, the contents of the article\nare separated from the article record to keep evidence and prevent fraud."
+            },
+            "minItems": 1,
+            "title": "List of snapshot contents",
+            "description": "List of snapshot contents.\n\nIt is created for the first time when an article is created, and is\naccumulated every time the article is modified."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creation time of article",
+            "description": "Creation time of article."
+          }
+        },
+        "required": [
+          "id",
+          "writer",
+          "snapshots",
+          "created_at"
+        ],
+        "description": "Article entity.\n\n`IBbsArticle* is a super-type entity of all kinds of articles in the current\nbackend system, literally shaping individual articles of the bulletin board.\n\nAnd, as you can see, the elements that must inevitably exist in the article,\nsuch as the `title` or the `body`, do not exist in the `IBbsArticle`, but exist\nin the subsidiary entity, {@link IBbsArticle.ISnapshot }, as a 1: N relationship,\nwhich is because a new snapshot record is published every time the article is\nmodified.\n\nThe reason why a new snapshot record is published every time the article is\nmodified is to preserve the evidence. Due to the nature of e-community, there\nis always a threat of dispute among the participants. And it can happen that\ndisputes arise through articles or {@link IBbsArticleComment comments}, and to\nprevent such things as modifying existing articles to manipulate the situation,\nthe article is designed in this structure.\n\nIn other words, to keep evidence, and prevent fraud."
+      },
+      "description": "Read individual article.\n\nReads an article with its every {@link IBbsArticle.ISnapshot snapshots}."
+    },
+    {
+      "method": "put",
+      "path": "/bbs/articles/{id}",
+      "name": "bbs_articles_putById",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Target article's "
+        },
+        {
+          "type": "object",
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": [
+                "txt",
+                "md",
+                "html"
+              ],
+              "title": "Format of body",
+              "description": "Format of body.\n\nSame meaning with extension like `html`, `md`, `txt`."
+            },
+            "title": {
+              "type": "string",
+              "title": "Title of article",
+              "description": "Title of article."
+            },
+            "body": {
+              "type": "string",
+              "title": "Content body of article",
+              "description": "Content body of article."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "title": "File name, except extension",
+                    "description": "File name, except extension."
+                  },
+                  "extension": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8,
+                    "nullable": true,
+                    "title": "Extension",
+                    "description": "Extension.\n\nPossible to omit like `README` case."
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "title": "URL path of the real file",
+                    "description": "URL path of the real file."
+                  }
+                },
+                "required": [
+                  "name",
+                  "extension",
+                  "url"
+                ]
+              },
+              "title": "List of attachment files",
+              "description": "List of attachment files."
+            },
+            "password": {
+              "type": "string",
+              "title": "Password for modification",
+              "description": "Password for modification."
+            }
+          },
+          "required": [
+            "format",
+            "title",
+            "body",
+            "files",
+            "password"
+          ]
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Primary Key",
+            "description": "Primary Key."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creation time of snapshot record",
+            "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or article."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "txt",
+              "md",
+              "html"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "title": "Content body of article",
+            "description": "Content body of article."
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "maxLength": 255,
+                  "title": "File name, except extension",
+                  "description": "File name, except extension."
+                },
+                "extension": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8,
+                  "nullable": true,
+                  "title": "Extension",
+                  "description": "Extension.\n\nPossible to omit like `README` case."
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "title": "URL path of the real file",
+                  "description": "URL path of the real file."
+                }
+              },
+              "required": [
+                "name",
+                "extension",
+                "url"
+              ]
+            },
+            "title": "List of attachment files",
+            "description": "List of attachment files."
+          },
+          "title": {
+            "type": "string",
+            "title": "Title of article",
+            "description": "Title of article."
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "format",
+          "body",
+          "files",
+          "title"
+        ],
+        "description": "Snapshot of article.\n\n`IBbsArticle.ISnapshot` is a snapshot entity that contains the contents of\nthe article, as mentioned in {@link IBbsArticle }, the contents of the article\nare separated from the article record to keep evidence and prevent fraud."
+      },
+      "description": "Update an article.\n\nAccumulate a new {@link IBbsArticle.ISnapshot snapshot} record to the article."
+    },
+    {
+      "method": "delete",
+      "path": "/bbs/articles/{id}",
+      "name": "bbs_articles_eraseById",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Target article's "
+        },
+        {
+          "type": "object",
+          "properties": {
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "password"
+          ]
+        }
+      ],
+      "description": "Erase an article.\n\nPerforms soft deletion to the article."
+    },
+    {
+      "method": "post",
+      "path": "/bbs/articles/{articleId}/comments",
+      "name": "bbs_articles_comments_postByArticleid",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Belonged article's "
+        },
+        {
+          "type": "object",
+          "properties": {
+            "writer": {
+              "type": "string",
+              "title": "Writer of comment",
+              "description": "Writer of comment."
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "txt",
+                "md",
+                "html"
+              ],
+              "title": "Format of body",
+              "description": "Format of body.\n\nSame meaning with extension like `html`, `md`, `txt`."
+            },
+            "body": {
+              "type": "string",
+              "title": "Content body of comment",
+              "description": "Content body of comment."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "title": "File name, except extension",
+                    "description": "File name, except extension."
+                  },
+                  "extension": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8,
+                    "nullable": true,
+                    "title": "Extension",
+                    "description": "Extension.\n\nPossible to omit like `README` case."
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "title": "URL path of the real file",
+                    "description": "URL path of the real file."
+                  }
+                },
+                "required": [
+                  "name",
+                  "extension",
+                  "url"
+                ]
+              },
+              "title": "List of attachment files",
+              "description": "List of attachment files."
+            },
+            "password": {
+              "type": "string",
+              "title": "Password for modification",
+              "description": "Password for modification."
+            }
+          },
+          "required": [
+            "writer",
+            "format",
+            "body",
+            "files",
+            "password"
+          ]
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Primary Key",
+            "description": "Primary Key."
+          },
+          "parent_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "title": "Parent comment's ID",
+            "description": "Parent comment's ID."
+          },
+          "writer": {
+            "type": "string",
+            "title": "Writer of comment",
+            "description": "Writer of comment."
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of snapshot record",
+                  "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or comment."
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "txt",
+                    "md",
+                    "html"
+                  ]
+                },
+                "body": {
+                  "type": "string",
+                  "title": "Content body of comment",
+                  "description": "Content body of comment."
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "File name, except extension",
+                        "description": "File name, except extension."
+                      },
+                      "extension": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 8,
+                        "nullable": true,
+                        "title": "Extension",
+                        "description": "Extension.\n\nPossible to omit like `README` case."
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "title": "URL path of the real file",
+                        "description": "URL path of the real file."
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "extension",
+                      "url"
+                    ]
+                  },
+                  "title": "List of attachment files",
+                  "description": "List of attachment files."
+                }
+              },
+              "required": [
+                "id",
+                "created_at",
+                "format",
+                "body",
+                "files"
+              ],
+              "description": "Snapshot of comment.\n\n`IBbsArticleComment.ISnapshot` is a snapshot entity that contains\nthe contents of the comment.\n\nAs mentioned in {@link IBbsArticleComment }, designed to keep evidence\nand prevent fraud."
+            },
+            "minItems": 1,
+            "title": "List of snapshot contents",
+            "description": "List of snapshot contents.\n\nIt is created for the first time when a comment being created, and is\naccumulated every time the comment is modified."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creation time of comment",
+            "description": "Creation time of comment."
+          }
+        },
+        "required": [
+          "id",
+          "parent_id",
+          "writer",
+          "snapshots",
+          "created_at"
+        ],
+        "description": "Comment written on an article.\n\n`IBbsArticleComment` is an entity that shapes the comments written on an article.\n\nAnd for this comment, as in the previous relationship between\n{@link IBbsArticle } and {@link IBbsArticle.ISnapshot }, the content body of the\ncomment is stored in the sub {@link IBbsArticleComment.ISnapshot } table for\nevidentialism, and a new snapshot record is issued every time the comment is modified.\n\nAlso, `IBbsArticleComment` is expressing the relationship of the hierarchical reply\nstructure through the {@link IBbsArticleComment.parent_id } attribute."
+      },
+      "description": "Create a new comment.\n\nCreate a new comment with its first {@link IBbsArticleComment.ISnapshot snapshot}."
+    },
+    {
+      "method": "patch",
+      "path": "/bbs/articles/{articleId}/comments",
+      "name": "bbs_articles_comments_patchByArticleid",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": ""
+        },
+        {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "writer": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              }
+            },
+            "sort": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-writer",
+                  "-created_at",
+                  "+writer",
+                  "+created_at"
+                ]
+              }
+            },
+            "page": {
+              "type": "integer",
+              "title": "Page number",
+              "description": "Page number."
+            },
+            "limit": {
+              "type": "integer",
+              "title": "Limitation of records per a page",
+              "description": "Limitation of records per a page."
+            }
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "integer",
+                "title": "Current page number",
+                "description": "Current page number."
+              },
+              "limit": {
+                "type": "integer",
+                "title": "Limitation of records per a page",
+                "description": "Limitation of records per a page."
+              },
+              "records": {
+                "type": "integer",
+                "title": "Total records in the database",
+                "description": "Total records in the database."
+              },
+              "pages": {
+                "type": "integer",
+                "title": "Total pages",
+                "description": "Total pages.\n\nEqual to {@link records } / {@link limit } with ceiling."
+              }
+            },
+            "required": [
+              "current",
+              "limit",
+              "records",
+              "pages"
+            ],
+            "description": "Page information."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "parent_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "title": "Parent comment's ID",
+                  "description": "Parent comment's ID."
+                },
+                "writer": {
+                  "type": "string",
+                  "title": "Writer of comment",
+                  "description": "Writer of comment."
+                },
+                "snapshots": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Primary Key",
+                        "description": "Primary Key."
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Creation time of snapshot record",
+                        "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or comment."
+                      },
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "txt",
+                          "md",
+                          "html"
+                        ]
+                      },
+                      "body": {
+                        "type": "string",
+                        "title": "Content body of comment",
+                        "description": "Content body of comment."
+                      },
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "maxLength": 255,
+                              "title": "File name, except extension",
+                              "description": "File name, except extension."
+                            },
+                            "extension": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 8,
+                              "nullable": true,
+                              "title": "Extension",
+                              "description": "Extension.\n\nPossible to omit like `README` case."
+                            },
+                            "url": {
+                              "type": "string",
+                              "format": "uri",
+                              "title": "URL path of the real file",
+                              "description": "URL path of the real file."
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "extension",
+                            "url"
+                          ]
+                        },
+                        "title": "List of attachment files",
+                        "description": "List of attachment files."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "created_at",
+                      "format",
+                      "body",
+                      "files"
+                    ],
+                    "description": "Snapshot of comment.\n\n`IBbsArticleComment.ISnapshot` is a snapshot entity that contains\nthe contents of the comment.\n\nAs mentioned in {@link IBbsArticleComment }, designed to keep evidence\nand prevent fraud."
+                  },
+                  "minItems": 1,
+                  "title": "List of snapshot contents",
+                  "description": "List of snapshot contents.\n\nIt is created for the first time when a comment being created, and is\naccumulated every time the comment is modified."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of comment",
+                  "description": "Creation time of comment."
+                }
+              },
+              "required": [
+                "id",
+                "parent_id",
+                "writer",
+                "snapshots",
+                "created_at"
+              ],
+              "description": "Comment written on an article.\n\n`IBbsArticleComment` is an entity that shapes the comments written on an article.\n\nAnd for this comment, as in the previous relationship between\n{@link IBbsArticle } and {@link IBbsArticle.ISnapshot }, the content body of the\ncomment is stored in the sub {@link IBbsArticleComment.ISnapshot } table for\nevidentialism, and a new snapshot record is issued every time the comment is modified.\n\nAlso, `IBbsArticleComment` is expressing the relationship of the hierarchical reply\nstructure through the {@link IBbsArticleComment.parent_id } attribute."
+            },
+            "title": "List of records",
+            "description": "List of records."
+          }
+        },
+        "required": [
+          "pagination",
+          "data"
+        ],
+        "description": "A page.\n\nCollection of records with pagination indformation."
+      },
+      "description": "List up all summarized comments.\n\nList up all summarized comments with pagination and searching options."
+    },
+    {
+      "method": "get",
+      "path": "/bbs/articles/{articleId}/comments/{id}",
+      "name": "bbs_articles_comments_getByArticleidAndId",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Belonged article's "
+        },
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Target comment's "
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Primary Key",
+            "description": "Primary Key."
+          },
+          "parent_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "title": "Parent comment's ID",
+            "description": "Parent comment's ID."
+          },
+          "writer": {
+            "type": "string",
+            "title": "Writer of comment",
+            "description": "Writer of comment."
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Primary Key",
+                  "description": "Primary Key."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "title": "Creation time of snapshot record",
+                  "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or comment."
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "txt",
+                    "md",
+                    "html"
+                  ]
+                },
+                "body": {
+                  "type": "string",
+                  "title": "Content body of comment",
+                  "description": "Content body of comment."
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "File name, except extension",
+                        "description": "File name, except extension."
+                      },
+                      "extension": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 8,
+                        "nullable": true,
+                        "title": "Extension",
+                        "description": "Extension.\n\nPossible to omit like `README` case."
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "title": "URL path of the real file",
+                        "description": "URL path of the real file."
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "extension",
+                      "url"
+                    ]
+                  },
+                  "title": "List of attachment files",
+                  "description": "List of attachment files."
+                }
+              },
+              "required": [
+                "id",
+                "created_at",
+                "format",
+                "body",
+                "files"
+              ],
+              "description": "Snapshot of comment.\n\n`IBbsArticleComment.ISnapshot` is a snapshot entity that contains\nthe contents of the comment.\n\nAs mentioned in {@link IBbsArticleComment }, designed to keep evidence\nand prevent fraud."
+            },
+            "minItems": 1,
+            "title": "List of snapshot contents",
+            "description": "List of snapshot contents.\n\nIt is created for the first time when a comment being created, and is\naccumulated every time the comment is modified."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creation time of comment",
+            "description": "Creation time of comment."
+          }
+        },
+        "required": [
+          "id",
+          "parent_id",
+          "writer",
+          "snapshots",
+          "created_at"
+        ],
+        "description": "Comment written on an article.\n\n`IBbsArticleComment` is an entity that shapes the comments written on an article.\n\nAnd for this comment, as in the previous relationship between\n{@link IBbsArticle } and {@link IBbsArticle.ISnapshot }, the content body of the\ncomment is stored in the sub {@link IBbsArticleComment.ISnapshot } table for\nevidentialism, and a new snapshot record is issued every time the comment is modified.\n\nAlso, `IBbsArticleComment` is expressing the relationship of the hierarchical reply\nstructure through the {@link IBbsArticleComment.parent_id } attribute."
+      },
+      "description": "Read individual comment.\n\nReads a comment with its every {@link IBbsArticleComment.ISnapshot snapshots}."
+    },
+    {
+      "method": "put",
+      "path": "/bbs/articles/{articleId}/comments/{id}",
+      "name": "bbs_articles_comments_putByArticleidAndId",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Belonged article's "
+        },
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Target comment's "
+        },
+        {
+          "type": "object",
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": [
+                "txt",
+                "md",
+                "html"
+              ],
+              "title": "Format of body",
+              "description": "Format of body.\n\nSame meaning with extension like `html`, `md`, `txt`."
+            },
+            "body": {
+              "type": "string",
+              "title": "Content body of comment",
+              "description": "Content body of comment."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "title": "File name, except extension",
+                    "description": "File name, except extension."
+                  },
+                  "extension": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8,
+                    "nullable": true,
+                    "title": "Extension",
+                    "description": "Extension.\n\nPossible to omit like `README` case."
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "title": "URL path of the real file",
+                    "description": "URL path of the real file."
+                  }
+                },
+                "required": [
+                  "name",
+                  "extension",
+                  "url"
+                ]
+              },
+              "title": "List of attachment files",
+              "description": "List of attachment files."
+            },
+            "password": {
+              "type": "string",
+              "title": "Password for modification",
+              "description": "Password for modification."
+            }
+          },
+          "required": [
+            "format",
+            "body",
+            "files",
+            "password"
+          ]
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Primary Key",
+            "description": "Primary Key."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creation time of snapshot record",
+            "description": "Creation time of snapshot record.\n\nIn other words, creation time or update time or comment."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "txt",
+              "md",
+              "html"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "title": "Content body of comment",
+            "description": "Content body of comment."
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "maxLength": 255,
+                  "title": "File name, except extension",
+                  "description": "File name, except extension."
+                },
+                "extension": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8,
+                  "nullable": true,
+                  "title": "Extension",
+                  "description": "Extension.\n\nPossible to omit like `README` case."
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "title": "URL path of the real file",
+                  "description": "URL path of the real file."
+                }
+              },
+              "required": [
+                "name",
+                "extension",
+                "url"
+              ]
+            },
+            "title": "List of attachment files",
+            "description": "List of attachment files."
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "format",
+          "body",
+          "files"
+        ],
+        "description": "Snapshot of comment.\n\n`IBbsArticleComment.ISnapshot` is a snapshot entity that contains\nthe contents of the comment.\n\nAs mentioned in {@link IBbsArticleComment }, designed to keep evidence\nand prevent fraud."
+      },
+      "description": "Update a comment.\n\nAccumulate a new {@link IBbsArticleComment.ISnapshot snapshot} record to the comment."
+    },
+    {
+      "method": "delete",
+      "path": "/bbs/articles/{articleId}/comments/{id}",
+      "name": "bbs_articles_comments_eraseByArticleidAndId",
+      "parameters": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Belonged article's "
+        },
+        {
+          "type": "string",
+          "format": "uuid",
+          "description": "Target comment's "
+        },
+        {
+          "type": "object",
+          "properties": {
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "password"
+          ]
+        }
+      ],
+      "description": "Erase a comment.\n\nPerforms soft deletion to the comment."
+    },
+    {
+      "method": "get",
+      "path": "/monitors/health",
+      "name": "monitors_health_get",
+      "parameters": [],
+      "description": "Health check API."
+    },
+    {
+      "method": "get",
+      "path": "/monitors/performance",
+      "name": "monitors_performance_get",
+      "parameters": [],
+      "output": {
+        "type": "object",
+        "properties": {
+          "cpu": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "number"
+              },
+              "system": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "user",
+              "system"
+            ]
+          },
+          "memory": {
+            "type": "object",
+            "properties": {
+              "rss": {
+                "type": "number"
+              },
+              "heapTotal": {
+                "type": "number"
+              },
+              "heapUsed": {
+                "type": "number"
+              },
+              "external": {
+                "type": "number"
+              },
+              "arrayBuffers": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "rss",
+              "heapTotal",
+              "heapUsed",
+              "external",
+              "arrayBuffers"
+            ]
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "fsRead": {
+                "type": "number"
+              },
+              "fsWrite": {
+                "type": "number"
+              },
+              "involuntaryContextSwitches": {
+                "type": "number"
+              },
+              "ipcReceived": {
+                "type": "number"
+              },
+              "ipcSent": {
+                "type": "number"
+              },
+              "majorPageFault": {
+                "type": "number"
+              },
+              "maxRSS": {
+                "type": "number"
+              },
+              "minorPageFault": {
+                "type": "number"
+              },
+              "sharedMemorySize": {
+                "type": "number"
+              },
+              "signalsCount": {
+                "type": "number"
+              },
+              "swappedOut": {
+                "type": "number"
+              },
+              "systemCPUTime": {
+                "type": "number"
+              },
+              "unsharedDataSize": {
+                "type": "number"
+              },
+              "unsharedStackSize": {
+                "type": "number"
+              },
+              "userCPUTime": {
+                "type": "number"
+              },
+              "voluntaryContextSwitches": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "fsRead",
+              "fsWrite",
+              "involuntaryContextSwitches",
+              "ipcReceived",
+              "ipcSent",
+              "majorPageFault",
+              "maxRSS",
+              "minorPageFault",
+              "sharedMemorySize",
+              "signalsCount",
+              "swappedOut",
+              "systemCPUTime",
+              "unsharedDataSize",
+              "unsharedStackSize",
+              "userCPUTime",
+              "voluntaryContextSwitches"
+            ]
+          }
+        },
+        "required": [
+          "cpu",
+          "memory",
+          "resource"
+        ]
+      },
+      "description": "Get performance information.\n\nGet perofmration information composed with CPU, memory and resource usage."
+    },
+    {
+      "method": "get",
+      "path": "/monitors/system",
+      "name": "monitors_system_get",
+      "parameters": [],
+      "output": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "number",
+            "title": "Random Unique ID",
+            "description": "Random Unique ID."
+          },
+          "arguments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "`process.argv`"
+          },
+          "commit": {
+            "type": "object",
+            "properties": {
+              "shortHash": {
+                "type": "string"
+              },
+              "branch": {
+                "type": "string"
+              },
+              "hash": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "sanitizedSubject": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "author": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email"
+                ],
+                "description": "Git user account info."
+              },
+              "committer": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email"
+                ],
+                "description": "Git user account info."
+              },
+              "authored_at": {
+                "type": "string"
+              },
+              "commited_at": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "shortHash",
+              "branch",
+              "hash",
+              "subject",
+              "sanitizedSubject",
+              "body",
+              "author",
+              "committer",
+              "authored_at",
+              "commited_at",
+              "tags"
+            ],
+            "description": "Git commit info."
+          },
+          "package": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "main": {
+                "type": "string"
+              },
+              "typings": {
+                "type": "string"
+              },
+              "scripts": {
+                "type": "object",
+                "properties": {},
+                "description": "Construct a type with a set of properties K of type T",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "repository": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "git"
+                    ]
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "url"
+                ]
+              },
+              "author": {
+                "type": "string"
+              },
+              "license": {
+                "type": "string"
+              },
+              "bugs": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              },
+              "homepage": {
+                "type": "string"
+              },
+              "devDependencies": {
+                "type": "object",
+                "properties": {},
+                "description": "Construct a type with a set of properties K of type T",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "dependencies": {
+                "type": "object",
+                "properties": {},
+                "description": "Construct a type with a set of properties K of type T",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "publishConfig": {
+                "type": "object",
+                "properties": {
+                  "registry": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "registry"
+                ]
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "name",
+              "version",
+              "description",
+              "scripts",
+              "repository",
+              "author",
+              "license",
+              "bugs",
+              "homepage",
+              "dependencies"
+            ],
+            "description": "NPM package info."
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Creation time of this server",
+            "description": "Creation time of this server."
+          }
+        },
+        "required": [
+          "uid",
+          "arguments",
+          "commit",
+          "package",
+          "created_at"
+        ],
+        "description": "System Information."
+      },
+      "description": "Get system information.\n\nGet system information with commit and package information."
+    }
+  ],
+  "errors": [],
+  "options": {
+    "keyword": false,
+    "separate": null
+  }
+}
