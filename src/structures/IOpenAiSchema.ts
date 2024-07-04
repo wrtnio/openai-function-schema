@@ -434,6 +434,8 @@ export namespace IOpenAiSchema {
      * `x-wrtn-prerequisite` is a property representing the prerequisite API
      * interaction. It means that, the endpoint API should be called before
      * calling the target API, for composing some argument value.
+     *
+     * @reference https://github.com/wrtnio/decorators/blob/main/src/Prerequisite.ts
      */
     "x-wrtn-prerequisite"?: {
       /**
