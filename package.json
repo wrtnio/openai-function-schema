@@ -1,17 +1,22 @@
 {
   "name": "@wrtnio/openai-function-schema",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenAI LLM function schema from OpenAPI (Swagger) document",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "module": "lib/index.mjs",
+  "bin": {
+    "wofs": "lib/executable/wofs.js"
+  },
   "scripts": {
     "prepare": "ts-patch install",
     "build": "npm run build:main && npm run build:test",
     "build:main": "rimraf lib && tsc && rollup -c",
     "build:test": "rimraf bin && tsc -p test/tsconfig.json",
     "dev": "npm run build:test -- --watch",
-    "test": "node bin/test"
+    "test": "npm run test:api && npm run test:cli",
+    "test:api": "node bin/test",
+    "test:cli": "node bin/src/executable/wofs.js --input test/swagger.json --output test/plain.json --keyword false"
   },
   "keywords": [
     "openai",
@@ -30,7 +35,10 @@
   "license": "ISC",
   "dependencies": {
     "@nestia/fetcher": "^3.4.1",
-    "@samchon/openapi": "^0.3.0"
+    "@samchon/openapi": "^0.3.0",
+    "commander": "^10.0.0",
+    "inquirer": "^8.2.5",
+    "typia": "^6.4.0"
   },
   "devDependencies": {
     "@nestia/core": "^3.4.1",
@@ -42,6 +50,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/inquirer": "^8.2.5",
     "@types/node": "^20.14.9",
     "@types/uuid": "^10.0.0",
     "nestia": "^5.3.1",
@@ -51,7 +60,6 @@
     "ts-patch": "^3.2.1",
     "typescript": "5.5.2",
     "typescript-transform-paths": "^3.4.7",
-    "typia": "^6.4.0",
     "uuid": "^10.0.0"
   },
   "files": [

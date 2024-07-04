@@ -1,4 +1,4 @@
-import * as wfc from "./module";
+import * as wofs from "./module";
 
 export * from "./module";
-export default wfc;
+export default wofs;
