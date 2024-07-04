@@ -16,7 +16,10 @@
     "dev": "npm run build:test -- --watch",
     "test": "npm run test:api && npm run test:cli",
     "test:api": "node bin/test",
-    "test:cli": "node bin/src/executable/wofs.js --input test/swagger.json --output test/plain.json --keyword false"
+    "test:cli": "node bin/src/executable/wofs.js --input test/swagger.json --output test/plain.json --keyword false",
+    "package:latest": "ts-node deploy/index.ts --tag latest",
+    "package:next": "ts-node deploy/index.ts --tag next",
+    "examples": "ts-node deploy/examples.ts"
   },
   "keywords": [
     "openai",
