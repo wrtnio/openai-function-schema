@@ -10,7 +10,7 @@ OpenAI function call schema definition, converter and executor.
 
 `@wrtnio/openai-function-schema` supports OpenAI function call schema definitions, and converter from Swagger (OpenAPI) documents. About the converter from Swagger (OpenAPI) documents, `@wrtnio/openai-function-schema` supports every versions of them.
 
-  - Swagger v2
+  - Swagger v2.0
   - OpenAPI v3.0
   - OpenApi v3.1
 
