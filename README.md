@@ -8,13 +8,15 @@
 
 OpenAI function call schema definition, converter and executor.
 
-`@wrtnio/openai-function-schema` supports OpenAI function call schema definitions, and converter from Swagger (OpenAPI) documents. About the converter from Swagger (OpenAPI) document, `@wrtnio/openai-function-schema` supports every versions of them.
+`@wrtnio/openai-function-schema` supports OpenAI function call schema definitions, and converter from Swagger (OpenAPI) documents. About the converter from Swagger (OpenAPI) documents, `@wrtnio/openai-function-schema` supports every versions of them.
+
+  - Swagger v2
+  - OpenAPI v3.0
+  - OpenApi v3.1
 
 Also, `@wrtnio/openai-function-schema` provides function call executor from [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts) and [`IOpenAiFunction`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts), so that you can easily execute the remote Restful API operation with OpenAI composed arguments.
 
-  - [Swagger v2](https://github.com/samchon/openapi/blob/master/src/SwaggerV2.ts) -> [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts)
-  - [OpenAPI v3.0](https://github.com/samchon/openapi/blob/master/src/OpenApiV3.ts) -> [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts)
-  - [OpenApi v3.1](https://github.com/samchon/openapi/blob/master/src/OpenApiV3_1.ts) -> [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts)
+Let's learn how to use it by example code of below.
 
 
 
