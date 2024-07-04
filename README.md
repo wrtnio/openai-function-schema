@@ -28,33 +28,41 @@ npm install @wrtnio/openai-function-schema
 
 ```typescript
 import {
+  IOpenAiDocument,
+  IOpenAiFunction,
   OpenAiComposer,
   OpenAiFetcher,
-  IOpenAiDocument,
-  IOpenAiFunction
 } from "@wrtnio/openai-function-schema";
 import fs from "fs";
+import typia from "typia";
+import { v4 } from "uuid";
+
+import { IBbsArticle } from "../../../api/structures/IBbsArticle";
 
 const main = async (): Promise<void> => {
+  // COMPOSE OPENAI FUNCTION CALL SCHEMAS
   const swagger = JSON.parse(
     await fs.promises.readFile("swagger.json", "utf8"),
   );
-  const document: IOpenAiDocument = OpenAiComposer.document({ swagger });
+  const document: IOpenAiDocument = OpenAiComposer.document({ 
+    swagger 
+  });
+
+  // EXECUTE OPENAI FUNCTION CALL
   const func: IOpenAiFunction = document.functions.find(
-    (f) => f.method === "post" && f.path === "/bbs/articles",
+    (f) => f.method === "put" && f.path === "/bbs/articles",
   )!;
-  await OpenAiFetcher.execute({
+  const article: IBbsArticle = await OpenAiFetcher.execute({
     document,
     function: func,
+    connection: { host: "http://localhost:3000" },
     arguments: [
-      {
-        title: "article title",
-        body: "article content body",
-        format: "md",
-        files: [],
-      },
+      // imagine that arguments are composed by OpenAI
+      v4(),
+      typia.random<IBbsArticle.ICreate>(),
     ],
   });
+  typia.assert(article);
 };
 main().catch(console.error);
 ```
