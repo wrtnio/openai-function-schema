@@ -8,6 +8,7 @@ import {
 } from "@samchon/openapi";
 import { OpenApiTypeChecker } from "@samchon/openapi/lib/internal/OpenApiTypeChecker";
 import { OpenApiV3Downgrader } from "@samchon/openapi/lib/internal/OpenApiV3Downgrader";
+import typia from "typia";
 
 import { OpenAiSchemaSeparator } from "./internal/OpenAiSchemaSeparator";
 import { IOpenAiSchema, ISwaggerOperation } from "./module";
@@ -92,7 +93,8 @@ export namespace OpenAiComposer {
    */
   export const document = (props: IProps): IOpenAiDocument => {
     // LIST UP ARGUMENTS
-    const swagger: ISwagger = OpenApi.convert<any, any>(props.swagger) as any;
+    typia.assert(props);
+    const swagger: ISwagger = OpenApi.convert(props.swagger);
     const options: IOpenAiDocument.IOptions = {
       keyword: props.options?.keyword ?? false,
       separate: props.options?.separate ?? null,
