@@ -44,7 +44,8 @@ interface FileUpload {
 interface Combined extends Memeber, Authorization, FileUpload {}
 
 const schema = (app: IJsonApplication): IOpenAiSchema => {
-  const schema: IOpenAiSchema | null = OpenAiComposer.schema(app.components)(
+  const schema: IOpenAiSchema | null = OpenAiComposer.schema(
+    app.components,
     app.schemas[0],
   );
   if (schema === null) throw new Error("Invalid schema");

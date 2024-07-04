@@ -1,6 +1,11 @@
 import { DynamicExecutor } from "@nestia/e2e";
 import { NestFactory } from "@nestjs/core";
-import { ISwagger } from "@wrtnio/openai-function-schema";
+import {
+  ISwagger,
+  OpenAiComposer,
+  OpenAiTypeChecker,
+} from "@wrtnio/openai-function-schema";
+import fs from "fs";
 import typia from "typia";
 
 import { TestModule } from "./controllers/TestModule";
@@ -11,6 +16,27 @@ const main = async (): Promise<void> => {
   // PREPARE SERVER
   const app = await NestFactory.create(TestModule, { logger: false });
   await app.listen(3_000);
+
+  // ARCHIVE DOCUMENTS
+  for (const keyword of [true, false])
+    await fs.promises.writeFile(
+      `${__dirname}/../../test/${keyword ? "keyword" : "positional"}.json`,
+      JSON.stringify(
+        OpenAiComposer.document({
+          swagger: typia.assert<ISwagger>(swagger),
+          options: {
+            keyword,
+            separate: (schema) =>
+              OpenAiTypeChecker.isString(schema) &&
+              (schema["x-wrtn-secret-key"] !== undefined ||
+                schema["contentMediaType"] !== undefined),
+          },
+        }),
+        null,
+        2,
+      ),
+      "utf8",
+    );
 
   // DO TEST
   const report: DynamicExecutor.IReport = await DynamicExecutor.validate({

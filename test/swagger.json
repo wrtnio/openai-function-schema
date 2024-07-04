@@ -7,7 +7,7 @@
     }
   ],
   "info": {
-    "version": "0.0.0",
+    "version": "0.0.2",
     "title": "@wrtnio/openai-function-schema",
     "description": "OpenAI LLM function schema from OpenAPI (Swagger) document",
     "license": {
@@ -207,6 +207,169 @@
         },
         "summary": "Erase an article",
         "description": "Erase an article.\n\nPerforms soft deletion to the article."
+      }
+    },
+    "/membership/join": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IMembership.IJoin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IMembership"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/membership/login": {
+      "patch": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IMembership.ILogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IMembership"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/membership/{secret}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "secret",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "x-wrtn-secret-key": "wrtn"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IMembership"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/membership/change": {
+      "patch": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "secret",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "x-wrtn-secret-key": "wrtn"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IMembership.IJoin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IMembership"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/membership/{secret}/change": {
+      "patch": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "secret",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "x-wrtn-secret-key": "wrtn"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IMembership.IJoin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IMembership"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/multipart": {
@@ -926,6 +1089,118 @@
           }
         },
         "required": [
+          "password"
+        ]
+      },
+      "IMembership.IJoin": {
+        "type": "object",
+        "properties": {
+          "secretKey": {
+            "type": "string",
+            "x-wrtn-secret-key": "wrtn"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "gender": {
+            "oneOf": [
+              {
+                "const": 0
+              },
+              {
+                "const": 1
+              },
+              {
+                "const": 2
+              }
+            ]
+          },
+          "password": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string",
+            "format": "uri",
+            "contentMediaType": "image/png"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "age",
+          "gender",
+          "password",
+          "picture"
+        ]
+      },
+      "IMembership": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "sex": {
+            "oneOf": [
+              {
+                "const": 0
+              },
+              {
+                "const": 1
+              },
+              {
+                "const": 2
+              }
+            ]
+          },
+          "picture": {
+            "type": "string",
+            "contentMediaType": "image/png"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "age",
+          "sex",
+          "picture"
+        ]
+      },
+      "IMembership.ILogin": {
+        "type": "object",
+        "properties": {
+          "secretKey": {
+            "type": "string",
+            "x-wrtn-secret-key": "wrtn"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
           "password"
         ]
       },

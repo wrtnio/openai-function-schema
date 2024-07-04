@@ -4,7 +4,8 @@ import typia, { IJsonApplication, tags } from "typia";
 
 export const test_composer_schema = (): void => {
   const app: IJsonApplication = typia.json.application<[First]>();
-  const schema: IOpenAiSchema | null = OpenAiComposer.schema(app.components)(
+  const schema: IOpenAiSchema | null = OpenAiComposer.schema(
+    app.components,
     app.schemas[0],
   );
   TestValidator.equals("schema")(schema)({

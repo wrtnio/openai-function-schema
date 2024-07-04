@@ -10,15 +10,30 @@ import { OpenApiTypeChecker } from "@samchon/openapi/lib/internal/OpenApiTypeChe
 import { OpenApiV3Downgrader } from "@samchon/openapi/lib/internal/OpenApiV3Downgrader";
 
 import { OpenAiSchemaSeparator } from "./internal/OpenAiSchemaSeparator";
-import { IOpenAiSchema, ISwaggerComponents, ISwaggerOperation } from "./module";
+import { IOpenAiSchema, ISwaggerOperation } from "./module";
 import { IOpenAiDocument } from "./structures/IOpenAiDocument";
 import { IOpenAiFunction } from "./structures/IOpenAiFunction";
 import { ISwagger } from "./structures/ISwagger";
 import { ISwaggerMigrate } from "./structures/ISwaggerMigrate";
-import { ISwaggerSchema } from "./structures/ISwaggerSchema";
 
 /**
  * OpenAI Document Composer.
+ *
+ * `OpenAiComposer` is a module for composing OpenAI function call schemas from
+ * Swagger (OpenAPI) document. The composed OpenAI document can be utilized for
+ * executing the actual function call with {@link OpenAiFetcher}.
+ *
+ * Also, if you've configured the {@link IOpenAiDocument.IOptions.separate}
+ * option, then the function call schemas would be separated into two parts;
+ * LLM (Large Language Model) and human. In that case, you can combine both
+ * LLM and human composed arguments into one by utilizing
+ * {@link OpenAiDataCombiner.parameters} function.
+ *
+ * Additionall, if you've configured the {@link IOpenAiDocument.IOptions.keyword}
+ * option, then the number of parameters in every function schemas would be only
+ * one, by wrapping all parameters into a single object. However, do not worry.
+ * {@link OpenAiFetcher} will automatically unwrap the object and pass the
+ * parameters to the actual function call.
  *
  * @author Samchon
  */
@@ -55,7 +70,22 @@ export namespace OpenAiComposer {
   /**
    * Compose OpenAI document of function call schemas.
    *
-   * Compose {@link IOpenAiDocument} from OpenAPI (or Swagger) document.
+   * Composes {@link IOpenAiDocument} from OpenAPI (or Swagger) document. In
+   * the composed OpenAI document, you can find the function call schemas
+   * which can be utilized for executing the actual function call with
+   * {@link OpenAiFetcher}.
+   *
+   * Also, if you've configured the {@link IOpenAiDocument.IOptions.separate}
+   * option, then the function call schemas would be separated into two parts;
+   * LLM (Large Language Model) and human. In that case, you can combine both
+   * LLM and human composed arguments into one by utilizing
+   * {@link OpenAiDataCombiner.parameters} function.
+   *
+   * Additionall, if you've configured the {@link IOpenAiDocument.IOptions.keyword}
+   * option, then the number of parameters in every function schemas would be only
+   * one, by wrapping all parameters into a single object. However, do not worry.
+   * {@link OpenAiFetcher} will automatically unwrap the object and pass the
+   * parameters to the actual function call.
    *
    * @param props Properties for composing the OpenAI document.
    * @returns Composed OpenAI document.
@@ -106,26 +136,43 @@ export namespace OpenAiComposer {
     };
   };
 
-  export const schema =
-    (components: OpenApi.IComponents) =>
-    (schema: OpenApi.IJsonSchema): IOpenAiSchema | null => {
-      const escaped: OpenApi.IJsonSchema | null = escapeReference(components)(
-        new Set(),
-      )(schema);
-      if (escaped === null) return null;
-      const downgraded = OpenApiV3Downgrader.downgradeSchema({
-        original: {},
-        downgraded: {},
-      })(escaped);
-      return downgraded as IOpenAiSchema;
-    };
+  /**
+   * Convert JSON schema to OpenAI schema.
+   *
+   * Converts JSON schema to OpenAI schema, which escapes `$ref` and downgrades
+   * the schema to the OpenAPI v3 specification. The reason why of escaping `$ref`
+   * and downgrading the OpenAPI version is that, OpenAI cannot understand both
+   * `$ref` and OpenAPI v3.1 specification.
+   *
+   * For reference, if your Swagger document containg the JSON schema is not the
+   * spec of OpenAPI v3. emended1, you can pre-convert it to OpenAPI v3.1 emended
+   * by utilizing the {@link OpenApi.convert} function.
+   *
+   * @param components Reusable components of Swagger document
+   * @param schema JSON schema to be converted
+   * @returns OpenAI schema if succeeded, otherwise `null`
+   */
+  export const schema = (
+    components: OpenApi.IComponents,
+    schema: OpenApi.IJsonSchema,
+  ): IOpenAiSchema | null => {
+    const escaped: OpenApi.IJsonSchema | null = escapeReference(components)(
+      new Set(),
+    )(schema);
+    if (escaped === null) return null;
+    const downgraded = OpenApiV3Downgrader.downgradeSchema({
+      original: {},
+      downgraded: {},
+    })(escaped);
+    return downgraded as IOpenAiSchema;
+  };
 
   const composeFunction =
     (options: IOpenAiDocument.IOptions) =>
     (components: OpenApi.IComponents) =>
     (route: IMigrateRoute): IOpenAiFunction | null => {
       // CAST SCHEMA TYPES
-      const cast = schema(components);
+      const cast = (s: OpenApi.IJsonSchema) => schema(components, s);
       const output: IOpenAiSchema | null | undefined =
         route.success && route.success ? cast(route.success.schema) : undefined;
       if (output === null) return null;
