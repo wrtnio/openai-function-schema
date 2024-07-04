@@ -15,5 +15,6 @@ export * from "./structures/ISwaggerTag";
 
 // FEATURES
 export * from "./OpenAiComposer";
+export * from "./OpenAiDataCombiner";
 export * from "./OpenAiFetcher";
 export * from "./OpenAiTypeChecker";

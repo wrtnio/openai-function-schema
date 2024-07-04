@@ -10,17 +10,17 @@ export namespace OpenAiSchemaSeparator {
       props.parameters.map(schema(props.predicator));
     return {
       llm: indexes
-        .filter(([llm]) => llm !== null)
         .map(([llm], index) => ({
           index,
           schema: llm!,
-        })),
+        }))
+        .filter(({ schema }) => schema !== null),
       human: indexes
-        .filter(([, human]) => human !== null)
         .map(([, human], index) => ({
           index,
           schema: human!,
-        })),
+        }))
+        .filter(({ schema }) => schema !== null),
     };
   };
 

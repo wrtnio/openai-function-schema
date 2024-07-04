@@ -8,6 +8,17 @@ import { IOpenAiFunction } from "./structures/IOpenAiFunction";
 /**
  * Function call executor for OpenAI.
  *
+ * `OpenAiFetcher` is a module for function call execution with target function's
+ * metadata {@link IOpenAiFunction} and OpenAI composed arguments.
+ *
+ * Also, `OpenAiFetcher` is designed to consider
+ * {@link IOpenAiDocument.IOptions.keyword} option, so that it can unwrap the
+ * composed arguments into the function call arguments automatically.
+ *
+ * However, about the {@link IOpenAiDocument.IOptions.separate} case, you have
+ * to use {@link OpenAiDataCombiner.parameters} function to combine the LLM and
+ * human arguments into one, by yourself manually.
+ *
  * @author Samchon
  */
 export namespace OpenAiFetcher {
@@ -32,6 +43,24 @@ export namespace OpenAiFetcher {
      */
     arguments: any[];
   }
+
+  /**
+   * Execute the function call.
+   *
+   * `OpenAiFetcher.fetch()` is a function executing the target API endpoint with
+   * the operation's metadata {@link IOpenAiFunction} and OpenAI composed arguments.
+   *
+   * Also, `OpenAiFetcher.fetch()` is designed to consider
+   * {@link IOpenAiDocument.IOptions.keyword} option, so that it can unwrap the
+   * composed arguments into the function call arguments automatically.
+   *
+   * However, about the {@link IOpenAiDocument.IOptions.separate} case, you have
+   * to use {@link OpenAiDataCombiner.parameters} function to combine the LLM and
+   * human arguments into one, by yourself manually.
+   *
+   * @param props
+   * @returns
+   */
   export const execute = async (props: IProps): Promise<any> => {
     const route: IMigrateRoute = props.function.route();
     return PlainFetcher.fetch(

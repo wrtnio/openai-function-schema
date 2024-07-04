@@ -65,7 +65,7 @@ main().catch(console.error);
 ## Features
 About supported features, please read description comments of each component.
 
-I'm preparing documentation and playground website of `@wrtnio/openai-function-schema` features. Until that, please read below components' description comments. Although you have to read source code of each component, but description comments of them may satisfy you.
+I'm preparing documentation and playground website of `@wrtnio/openai-function-schema` features. Until that, please read below components' description comments. Even though you have to read source code of each component, but description comments would satisfy you.
 
 - Schema Definitions
   - [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts): OpenAI function metadata collection with options
@@ -74,8 +74,5 @@ I'm preparing documentation and playground website of `@wrtnio/openai-function-s
 - Functions
   - [`OpenAiComposer`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiComposer.ts): Compose `IOpenAiDocument` from Swagger (OpenAPI) document
   - [`OpenAiFetcher`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiFetcher.ts): Function call executor with `IOpenAiFunction`
+  - [`OpenAiDataCombiner`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiDataCombiner.ts): Data combiner for LLM function call with human composed data
   - [`OpenAiTypeChecker`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiTypeChecker.ts): Type checker for `IOpenAiSchema`
-
-```typescript
-
-```
