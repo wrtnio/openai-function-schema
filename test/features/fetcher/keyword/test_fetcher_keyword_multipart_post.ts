@@ -1,15 +1,30 @@
-import { OpenAiFetcher } from "@wrtnio/openai-function-schema";
+import {
+  IOpenAiDocument,
+  IOpenAiFunction,
+  OpenAiComposer,
+  OpenAiFetcher,
+} from "@wrtnio/openai-function-schema";
 import typia from "typia";
 
 import { IMultipart } from "../../../api/structures/IMultipart";
-import { ITestProps } from "../../../internal/ITestProps";
+import { ITestProps } from "../../../structures/ITestProps";
 
 export const test_fetcher_keyword_multipart_post = async (
   props: ITestProps,
 ): Promise<void> => {
+  const document: IOpenAiDocument = OpenAiComposer.document({
+    swagger: props.swagger,
+    options: {
+      keyword: true,
+    },
+  });
   const content: IMultipart.IContent = await OpenAiFetcher.execute({
-    document: props.document("keyword"),
-    function: props.function("keyword")("post", "/multipart"),
+    document,
+    function: typia.assert<IOpenAiFunction>(
+      document.functions.find(
+        (f) => f.method === "post" && f.path === "/multipart",
+      ),
+    ),
     connection: props.connection,
     arguments: [
       {

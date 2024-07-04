@@ -33,7 +33,7 @@ export namespace OpenAiFetcher {
     arguments: any[];
   }
   export const execute = async (props: IProps): Promise<any> => {
-    const route = props.function.route();
+    const route: IMigrateRoute = props.function.route();
     return PlainFetcher.fetch(
       props.connection,
       {

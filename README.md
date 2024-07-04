@@ -39,7 +39,7 @@ const main = async (): Promise<void> => {
   const swagger = JSON.parse(
     await fs.promises.readFile("swagger.json", "utf8"),
   );
-  const document: IOpenAiDocument = OpenAiComposer.compose({ swagger });
+  const document: IOpenAiDocument = OpenAiComposer.document({ swagger });
   const func: IOpenAiFunction = document.functions.find(
     (f) => f.method === "post" && f.path === "/bbs/articles",
   )!;
@@ -63,11 +63,19 @@ main().catch(console.error);
 
 
 ## Features
+About supported features, please read description comments of each component.
+
+I'm preparing documentation and playground website of `@wrtnio/openai-function-schema` features. Until that, please read below components' description comments. Although you have to read source code of each component, but description comments of them may satisfy you.
+
+- Schema Definitions
+  - [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts): OpenAI function metadata collection with options
+  - [`IOpenAiFunction`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiFunction.ts): OpenAI's function metadata
+  - [`IOpenAiSchema`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiSchema.ts): Type schema info escaped `$ref`.
 - Functions
   - [`OpenAiComposer`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiComposer.ts): Compose `IOpenAiDocument` from Swagger (OpenAPI) document
   - [`OpenAiFetcher`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiFetcher.ts): Function call executor with `IOpenAiFunction`
   - [`OpenAiTypeChecker`](https://github.com/wrtnio/openai-function-schema/blob/master/src/OpenAiTypeChecker.ts): Type checker for `IOpenAiSchema`
-- Structures
-  - [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts): OpenAI function metadata collection with options
-  - [`IOpenAiFunction`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiFunction.ts): OpenAI's function metadata
-  - [`IOpenAiSchema`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiSchema.ts): Type schema info escaped `$ref`.
+
+```typescript
+
+```
