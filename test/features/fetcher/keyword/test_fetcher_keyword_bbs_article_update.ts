@@ -1,16 +1,31 @@
-import { OpenAiFetcher } from "@wrtnio/openai-function-schema";
+import {
+  IOpenAiDocument,
+  IOpenAiFunction,
+  OpenAiComposer,
+  OpenAiFetcher,
+} from "@wrtnio/openai-function-schema";
 import typia from "typia";
 import { v4 } from "uuid";
 
 import { IBbsArticle } from "../../../api/structures/IBbsArticle";
-import { ITestProps } from "../../../internal/ITestProps";
+import { ITestProps } from "../../../structures/ITestProps";
 
 export const test_fetcher_keyword_bbs_article_update = async (
   props: ITestProps,
 ): Promise<void> => {
+  const document: IOpenAiDocument = OpenAiComposer.document({
+    swagger: props.swagger,
+    options: {
+      keyword: true,
+    },
+  });
   await OpenAiFetcher.execute({
-    document: props.document("keyword"),
-    function: props.function("keyword")("put", "/bbs/articles/{id}"),
+    document,
+    function: typia.assert<IOpenAiFunction>(
+      document.functions.find(
+        (f) => f.method === "put" && f.path === "/bbs/articles/{id}",
+      ),
+    ),
     connection: props.connection,
     arguments: [
       {

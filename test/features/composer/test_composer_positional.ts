@@ -6,10 +6,10 @@ import {
 } from "@wrtnio/openai-function-schema";
 import typia from "typia";
 
-import { ITestProps } from "../../internal/ITestProps";
+import { ITestProps } from "../../structures/ITestProps";
 
 export const test_composer_positional = async ({ swagger }: ITestProps) => {
-  const document: IOpenAiDocument = OpenAiComposer.compose({
+  const document: IOpenAiDocument = OpenAiComposer.document({
     swagger,
     options: {
       keyword: false,

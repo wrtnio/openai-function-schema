@@ -1,14 +1,29 @@
-import { OpenAiFetcher } from "@wrtnio/openai-function-schema";
+import {
+  IOpenAiDocument,
+  IOpenAiFunction,
+  OpenAiComposer,
+  OpenAiFetcher,
+} from "@wrtnio/openai-function-schema";
 import typia from "typia";
 
-import { ITestProps } from "../../../internal/ITestProps";
+import { ITestProps } from "../../../structures/ITestProps";
 
 export const test_fetcher_keyword_query_individual = async (
   props: ITestProps,
 ): Promise<void> => {
+  const document: IOpenAiDocument = OpenAiComposer.document({
+    swagger: props.swagger,
+    options: {
+      keyword: true,
+    },
+  });
   const etc: string = await OpenAiFetcher.execute({
-    document: props.document("keyword"),
-    function: props.function("keyword")("get", "/query/individual"),
+    document,
+    function: typia.assert<IOpenAiFunction>(
+      document.functions.find(
+        (f) => f.method === "get" && f.path === "/query/individual",
+      ),
+    ),
     connection: props.connection,
     arguments: [
       {

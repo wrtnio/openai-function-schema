@@ -1,30 +1,16 @@
 import { DynamicExecutor } from "@nestia/e2e";
 import { NestFactory } from "@nestjs/core";
-import { ISwagger, OpenAiComposer } from "@wrtnio/openai-function-schema";
+import { ISwagger } from "@wrtnio/openai-function-schema";
 import typia from "typia";
 
 import { TestModule } from "./controllers/TestModule";
-import { ITestProps } from "./internal/ITestProps";
+import { ITestProps } from "./structures/ITestProps";
 import swagger from "./swagger.json";
 
 const main = async (): Promise<void> => {
   // PREPARE SERVER
   const app = await NestFactory.create(TestModule, { logger: false });
   await app.listen(3_000);
-
-  typia.assertGuard<ISwagger>(swagger);
-  const keyword = OpenAiComposer.compose({
-    swagger,
-    options: {
-      keyword: true,
-    },
-  });
-  const positional = OpenAiComposer.compose({
-    swagger,
-    options: {
-      keyword: false,
-    },
-  });
 
   // DO TEST
   const report: DynamicExecutor.IReport = await DynamicExecutor.validate({
@@ -33,17 +19,6 @@ const main = async (): Promise<void> => {
       {
         connection: { host: `http://localhost:3000` },
         swagger: typia.assert<ISwagger>(swagger),
-        document: (type) => (type === "keyword" ? keyword : positional),
-        function: (type) => {
-          const document = type === "keyword" ? keyword : positional;
-          return (method: string, path: string) => {
-            const func = document.functions.find(
-              (f) => f.method === method && f.path === path,
-            );
-            if (!func) throw new Error(`Function not found`);
-            return func;
-          };
-        },
       } satisfies ITestProps,
     ],
   })(__dirname + "/features");

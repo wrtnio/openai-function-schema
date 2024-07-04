@@ -9,12 +9,13 @@ import {
 import { OpenApiTypeChecker } from "@samchon/openapi/lib/internal/OpenApiTypeChecker";
 import { OpenApiV3Downgrader } from "@samchon/openapi/lib/internal/OpenApiV3Downgrader";
 
-import { OpenAiParameterSeparator } from "./internal/OpenAiParameterSeparator";
-import { IOpenAiSchema, ISwaggerOperation } from "./module";
+import { OpenAiSchemaSeparator } from "./internal/OpenAiSchemaSeparator";
+import { IOpenAiSchema, ISwaggerComponents, ISwaggerOperation } from "./module";
 import { IOpenAiDocument } from "./structures/IOpenAiDocument";
 import { IOpenAiFunction } from "./structures/IOpenAiFunction";
 import { ISwagger } from "./structures/ISwagger";
 import { ISwaggerMigrate } from "./structures/ISwaggerMigrate";
+import { ISwaggerSchema } from "./structures/ISwaggerSchema";
 
 /**
  * OpenAI Document Composer.
@@ -23,7 +24,7 @@ import { ISwaggerMigrate } from "./structures/ISwaggerMigrate";
  */
 export namespace OpenAiComposer {
   /**
-   * Properties of {@link compose} function.
+   * Properties of {@link document} function.
    */
   export interface IProps {
     /**
@@ -59,11 +60,11 @@ export namespace OpenAiComposer {
    * @param props Properties for composing the OpenAI document.
    * @returns Composed OpenAI document.
    */
-  export const compose = (props: IProps): IOpenAiDocument => {
+  export const document = (props: IProps): IOpenAiDocument => {
     // LIST UP ARGUMENTS
-    const swagger: ISwagger = OpenApi.convert(props.swagger);
+    const swagger: ISwagger = OpenApi.convert<any, any>(props.swagger) as any;
     const options: IOpenAiDocument.IOptions = {
-      keyword: props.options?.keyword ?? true,
+      keyword: props.options?.keyword ?? false,
       separate: props.options?.separate ?? null,
     };
 
@@ -105,57 +106,57 @@ export namespace OpenAiComposer {
     };
   };
 
+  export const schema =
+    (components: OpenApi.IComponents) =>
+    (schema: OpenApi.IJsonSchema): IOpenAiSchema | null => {
+      const escaped: OpenApi.IJsonSchema | null = escapeReference(components)(
+        new Set(),
+      )(schema);
+      if (escaped === null) return null;
+      const downgraded = OpenApiV3Downgrader.downgradeSchema({
+        original: {},
+        downgraded: {},
+      })(escaped);
+      return downgraded as IOpenAiSchema;
+    };
+
   const composeFunction =
     (options: IOpenAiDocument.IOptions) =>
     (components: OpenApi.IComponents) =>
     (route: IMigrateRoute): IOpenAiFunction | null => {
-      const escape = escapeReference(components)(new Set());
-      const parameter = {
-        type: "object",
-        properties: Object.fromEntries([
-          ...route.parameters.map((p) => [
-            p.key,
-            {
-              ...escape(p.schema),
-              description: p.description ?? p.schema.description,
-            },
-          ]),
-          ...(route.query
-            ? [[route.query.key, escape(route.query.schema)]]
-            : []),
-          ...(route.body ? [[route.body.key, escape(route.body.schema)]] : []),
-        ]),
-      } satisfies OpenApiV3.IJsonSchema.IObject;
-      if (Object.values(parameter.properties).some((v) => v === null))
-        return null;
-
-      const output: OpenApi.IJsonSchema | null | undefined = route.success
-        ? escape(route.success.schema)
-        : undefined;
+      // CAST SCHEMA TYPES
+      const cast = schema(components);
+      const output: IOpenAiSchema | null | undefined =
+        route.success && route.success ? cast(route.success.schema) : undefined;
       if (output === null) return null;
+      const properties: [string, IOpenAiSchema | null][] = [
+        ...route.parameters,
+        ...(route.query ? [route.query] : []),
+        ...(route.body ? [route.body] : []),
+      ].map((p) => [p.key, cast(p.schema)]);
+      if (properties.some(([_k, v]) => v === null)) return null;
 
-      const operation: ISwaggerOperation = route.operation();
+      // COMPOSE PARAMETERS
       const parameters: IOpenAiSchema[] = options.keyword
         ? [
-            OpenApiV3Downgrader.downgradeSchema({
-              original: {},
-              downgraded: {},
-            })(parameter) as OpenApiV3.IJsonSchema.IObject,
+            {
+              type: "object",
+              properties: Object.fromEntries(
+                properties as [string, IOpenAiSchema][],
+              ),
+            },
           ]
-        : Object.values(parameter.properties).map((v) =>
-            OpenApiV3Downgrader.downgradeSchema({
-              original: {},
-              downgraded: {},
-            })(v as any),
-          );
+        : properties.map(([_k, v]) => v!);
+      const operation: ISwaggerOperation = route.operation();
 
+      // FINALIZATION
       return {
         method: route.method as "get",
         path: route.path,
         name: route.accessor.join("_"),
         parameters,
         separated: options.separate
-          ? OpenAiParameterSeparator.separate({
+          ? OpenAiSchemaSeparator.parameters({
               parameters,
               predicator: options.separate,
             })
