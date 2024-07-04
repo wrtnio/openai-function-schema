@@ -67,5 +67,6 @@
     "src",
     "LICENSE",
     "README.md"
-  ]
+  ],
+  "private": true
 }
