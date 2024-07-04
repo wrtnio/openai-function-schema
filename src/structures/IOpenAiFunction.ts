@@ -71,6 +71,11 @@ export interface IOpenAiFunction {
    */
   parameters: IOpenAiSchema[];
 
+  /**
+   * Collection of separated parameters.
+   *
+   * Filled only when {@link IOpenAiDocument.IOptions.separate} has been configured.
+   */
   separated?: IOpenAiFunction.ISeparated;
 
   /**
