@@ -71,6 +71,8 @@ export interface IOpenAiFunction {
    */
   parameters: IOpenAiSchema[];
 
+  separated?: IOpenAiFunction.ISeparated;
+
   /**
    * Expected return type.
    *
@@ -100,4 +102,35 @@ export interface IOpenAiFunction {
    * @returns Migration route metadata.
    */
   route: () => ISwaggerMigrateRoute;
+}
+export namespace IOpenAiFunction {
+  /**
+   * Collection of separated parameters.
+   */
+  export interface ISeparated {
+    /**
+     * Parameters that would be composed by the OpenAI.
+     */
+    llm: ISeparatedParameter[];
+
+    /**
+     * Parameters that would be composed by the human.
+     */
+    human: ISeparatedParameter[];
+  }
+
+  /**
+   * Separated parameter.
+   */
+  export interface ISeparatedParameter {
+    /**
+     * Index of the parameter.
+     */
+    index: number;
+
+    /**
+     * Type schema info of the parameter.
+     */
+    schema: IOpenAiSchema;
+  }
 }

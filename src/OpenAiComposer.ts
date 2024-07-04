@@ -9,6 +9,8 @@ import {
 import { OpenApiTypeChecker } from "@samchon/openapi/lib/internal/OpenApiTypeChecker";
 import { OpenApiV3Downgrader } from "@samchon/openapi/lib/internal/OpenApiV3Downgrader";
 
+import { OpenAiParameterSeparator } from "./internal/OpenAiParameterSeparator";
+import { IOpenAiSchema, ISwaggerOperation } from "./module";
 import { IOpenAiDocument } from "./structures/IOpenAiDocument";
 import { IOpenAiFunction } from "./structures/IOpenAiFunction";
 import { ISwagger } from "./structures/ISwagger";
@@ -62,6 +64,7 @@ export namespace OpenAiComposer {
     const swagger: ISwagger = OpenApi.convert(props.swagger);
     const options: IOpenAiDocument.IOptions = {
       keyword: props.options?.keyword ?? true,
+      separate: props.options?.separate ?? null,
     };
 
     // MIGRATE FROM SWAGGER
@@ -131,24 +134,32 @@ export namespace OpenAiComposer {
         : undefined;
       if (output === null) return null;
 
-      const operation = route.operation();
+      const operation: ISwaggerOperation = route.operation();
+      const parameters: IOpenAiSchema[] = options.keyword
+        ? [
+            OpenApiV3Downgrader.downgradeSchema({
+              original: {},
+              downgraded: {},
+            })(parameter) as OpenApiV3.IJsonSchema.IObject,
+          ]
+        : Object.values(parameter.properties).map((v) =>
+            OpenApiV3Downgrader.downgradeSchema({
+              original: {},
+              downgraded: {},
+            })(v as any),
+          );
+
       return {
         method: route.method as "get",
         path: route.path,
         name: route.accessor.join("_"),
-        parameters: options.keyword
-          ? [
-              OpenApiV3Downgrader.downgradeSchema({
-                original: {},
-                downgraded: {},
-              })(parameter) as OpenApiV3.IJsonSchema.IObject,
-            ]
-          : Object.values(parameter.properties).map((v) =>
-              OpenApiV3Downgrader.downgradeSchema({
-                original: {},
-                downgraded: {},
-              })(v as any),
-            ),
+        parameters,
+        separated: options.separate
+          ? OpenAiParameterSeparator.separate({
+              parameters,
+              predicator: options.separate,
+            })
+          : undefined,
         output: output
           ? OpenApiV3Downgrader.downgradeSchema({
               original: {},
