@@ -2,7 +2,7 @@
 ![Wrtn Technologies](https://github.com/wrtnio/openai-function-schema/assets/13158709/48ee1578-f7cd-4e64-abd9-8354716ec0c9)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/wrtnio/openai-function/blob/master/LICENSE)
-[![npm version](https://badge.fury.io/js/@wrtnio/openai-function-schema.svg)](https://www.npmjs.com/package/@wrtnio/openai-function-schema)
+[![npm version](https://img.shields.io/npm/v/@wrtnio/openai-function-schema.svg)](https://www.npmjs.com/package/@wrtnio/openai-function-schema)
 [![Downloads](https://img.shields.io/npm/dm/@wrtnio/openai-function-schema.svg)](https://www.npmjs.com/package/@wrtnio/openai-function-schema)
 [![Build Status](https://github.com/wrtnio/openai-function-schema/workflows/build/badge.svg)](https://github.com/wrtnio/openai-function-schema/actions?query=workflow%3Abuild)
 
