@@ -110,7 +110,7 @@ npx @wrtnio/openai-function-schema
 
 Convert swagger to OpenAI function schema file by a CLI command.
 
-If you run `npx @wrtnio/openai-function-schema` (or `npx wofs` after global setup), the CLI (Command Line Interface) will inquiry those arguments. After you fill all of them, the OpenAI fuction call schema file of [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts) type would be created to the target location.
+If you run `npx @wrtnio/openai-function-schema` (or `npx wofs` after global setup), the CLI (Command Line Interface) will inquiry those arguments. After you fill all of them, the OpenAI function call schema file of [`IOpenAiDocument`](https://github.com/wrtnio/openai-function-schema/blob/master/src/structures/IOpenAiDocument.ts) type would be created to the target location.
 
 If you want to specify arguments without prompting, you can fill them like below:
 
