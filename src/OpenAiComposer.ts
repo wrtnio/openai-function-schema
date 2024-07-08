@@ -11,7 +11,7 @@ import { OpenApiV3Downgrader } from "@samchon/openapi/lib/internal/OpenApiV3Down
 import typia from "typia";
 
 import { OpenAiSchemaSeparator } from "./internal/OpenAiSchemaSeparator";
-import { IOpenAiSchema, ISwaggerOperation } from "./module";
+import { IOpenAiSchema, ISwaggerOperation, OpenAiTypeChecker } from "./module";
 import { IOpenAiDocument } from "./structures/IOpenAiDocument";
 import { IOpenAiFunction } from "./structures/IOpenAiFunction";
 import { ISwagger } from "./structures/ISwagger";
@@ -162,11 +162,18 @@ export namespace OpenAiComposer {
       new Set(),
     )(schema);
     if (escaped === null) return null;
-    const downgraded = OpenApiV3Downgrader.downgradeSchema({
+    const downgraded: IOpenAiSchema = OpenApiV3Downgrader.downgradeSchema({
       original: {},
       downgraded: {},
     })(escaped);
-    return downgraded as IOpenAiSchema;
+    OpenAiTypeChecker.visit(downgraded, (schema) => {
+      if (
+        OpenAiTypeChecker.isOneOf(schema) &&
+        (schema as any).discriminator !== undefined
+      )
+        delete (schema as any).discriminator;
+    });
+    return downgraded;
   };
 
   const composeFunction =
