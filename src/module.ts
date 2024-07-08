@@ -9,6 +9,7 @@ export * from "./structures/ISwaggerMigrate";
 export * from "./structures/ISwaggerMigrateRoute";
 export * from "./structures/ISwaggerOperation";
 export * from "./structures/ISwaggerPath";
+export * from "./structures/ISwaggerSchema";
 export * from "./structures/ISwaggerSecurityScheme";
 export * from "./structures/ISwaggerServer";
 export * from "./structures/ISwaggerTag";
