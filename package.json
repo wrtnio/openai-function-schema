@@ -38,14 +38,14 @@
   "license": "ISC",
   "dependencies": {
     "@nestia/fetcher": "^3.5.0",
-    "@samchon/openapi": "^0.3.1",
+    "@samchon/openapi": "^0.3.4",
     "commander": "^10.0.0",
     "inquirer": "^8.2.5",
     "typia": "^6.4.3"
   },
   "devDependencies": {
     "@nestia/core": "^3.5.0",
-    "@nestia/e2e": "^0.6.0",
+    "@nestia/e2e": "^0.7.0",
     "@nestia/sdk": "^3.5.0",
     "@nestjs/common": "^10.3.10",
     "@nestjs/core": "^10.3.10",
@@ -56,12 +56,13 @@
     "@types/inquirer": "^8.2.5",
     "@types/node": "^20.14.9",
     "@types/uuid": "^10.0.0",
+    "chalk": "^4.1.2",
     "nestia": "^5.3.1",
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
     "rollup": "^4.18.0",
     "ts-patch": "^3.2.1",
-    "typescript": "5.5.2",
+    "typescript": "^5.5.3",
     "typescript-transform-paths": "^3.4.7",
     "uuid": "^10.0.0"
   },
