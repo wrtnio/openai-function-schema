@@ -63,7 +63,7 @@ export namespace OpenAiComposer {
     /**
      * Migrate document from Swagger.
      *
-     * If you've already migrated from the Swagger document, you can pass it.
+     * If you've already migrated from the Swagger document, you can re-use it.
      */
     migrate?: ISwaggerMigrate;
   }
@@ -186,10 +186,40 @@ export namespace OpenAiComposer {
         route.success && route.success ? cast(route.success.schema) : undefined;
       if (output === null) return null;
       const properties: [string, IOpenAiSchema | null][] = [
-        ...route.parameters,
-        ...(route.query ? [route.query] : []),
-        ...(route.body ? [route.body] : []),
-      ].map((p) => [p.key, cast(p.schema)]);
+        ...route.parameters.map((p) => ({
+          key: p.key,
+          schema: {
+            ...p.schema,
+            title: p.parameter().title ?? p.schema.title,
+            description: p.parameter().description ?? p.schema.description,
+          },
+        })),
+        ...(route.query
+          ? [
+              {
+                key: route.query.key,
+                schema: {
+                  ...route.query.schema,
+                  title: route.query.title() ?? route.query.schema.title,
+                  description:
+                    route.query.description() ?? route.query.schema.description,
+                },
+              },
+            ]
+          : []),
+        ...(route.body
+          ? [
+              {
+                key: route.body.key,
+                schema: {
+                  ...route.body.schema,
+                  description:
+                    route.body.description() ?? route.body.schema.description,
+                },
+              },
+            ]
+          : []),
+      ].map((o) => [o.key, cast(o.schema)]);
       if (properties.some(([_k, v]) => v === null)) return null;
 
       // COMPOSE PARAMETERS

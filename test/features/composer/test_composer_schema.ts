@@ -15,14 +15,17 @@ export const test_composer_schema = (): void => {
       second: {
         type: "object",
         required: ["third"],
+        description: "The second property",
         properties: {
           third: {
             type: "object",
             required: ["id"],
+            description: "The third property",
             properties: {
               id: {
                 type: "string",
                 format: "uuid",
+                description: "Hello word",
               },
             },
           },
@@ -33,11 +36,20 @@ export const test_composer_schema = (): void => {
 };
 
 interface First {
+  /**
+   * The second property
+   */
   second: Second;
 }
 interface Second {
+  /**
+   * The third property
+   */
   third: Third;
 }
 interface Third {
+  /**
+   * Hello word
+   */
   id: string & tags.Format<"uuid">;
 }
