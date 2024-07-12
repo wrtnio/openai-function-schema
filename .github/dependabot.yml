@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 25
+    allow:
+      - dependency-name: "@samchon/openapi"
+      - dependency-name: "@nestjs/*"
+      - dependency-name: "@nestia/*"
+      - dependency-name: "nestia"
+      - dependency-name: "typia"
+      - dependency-name: "typescript"
+      - dependency-name: "ts-patch"
+    groups:
+      Samchon:
+        patterns:
+          - "@samchon/openapi"
+          - "@nestia/*"
+          - "nestia"
+          - "typia"
+      NestJS:
+        patterns:
+          - "@nestjs/*"
+      TypeScript:
+        patterns:
+          - "typescript"
+          - "ts-patch"
