@@ -1,4 +1,4 @@
-import { IConnection } from "@nestia/fetcher";
+import { IConnection, IPropagation } from "@nestia/fetcher";
 import { PlainFetcher } from "@nestia/fetcher/lib/PlainFetcher";
 import { IMigrateRoute } from "@samchon/openapi";
 
@@ -6,7 +6,7 @@ import { IOpenAiDocument } from "./structures/IOpenAiDocument";
 import { IOpenAiFunction } from "./structures/IOpenAiFunction";
 
 /**
- * Function call executor for OpenAI.
+ * Function call executors for OpenAI.
  *
  * `OpenAiFetcher` is a module for function call execution with target function's
  * metadata {@link IOpenAiFunction} and OpenAI composed arguments.
@@ -47,10 +47,10 @@ export namespace OpenAiFetcher {
   /**
    * Execute the function call.
    *
-   * `OpenAiFetcher.fetch()` is a function executing the target API endpoint with
+   * `OpenAiFetcher.execute()` is a function executing the target API endpoint with
    * the operation's metadata {@link IOpenAiFunction} and OpenAI composed arguments.
    *
-   * Also, `OpenAiFetcher.fetch()` is designed to consider
+   * Also, `OpenAiFetcher.execute()` is designed to consider
    * {@link IOpenAiDocument.IOptions.keyword} option, so that it can unwrap the
    * composed arguments into the function call arguments automatically.
    *
@@ -58,12 +58,43 @@ export namespace OpenAiFetcher {
    * to use {@link OpenAiDataCombiner.parameters} function to combine the LLM and
    * human arguments into one, by yourself manually.
    *
-   * @param props
-   * @returns
+   * @param props Function call properties.
+   * @returns Response of the function call.
    */
-  export const execute = async (props: IProps): Promise<any> => {
-    const route: IMigrateRoute = props.function.route();
-    return PlainFetcher.fetch(
+  export const execute = (props: IProps): Promise<any> =>
+    PlainFetcher.fetch(...getFetcherArguments(props));
+
+  /**
+   * Propagate the function call.
+   *
+   * `OpenAiFetcher.propagate()` is a function propagating the target API endpoint with
+   * the operation's metadata {@link IOpenAiFunction} and OpenAI composed arguments.
+   *
+   * Also, `OpenAiFetcher.execute()` is designed to consider
+   * {@link IOpenAiDocument.IOptions.keyword} option, so that it can unwrap the
+   * composed arguments into the function call arguments automatically.
+   *
+   * However, about the {@link IOpenAiDocument.IOptions.separate} case, you have
+   * to use {@link OpenAiDataCombiner.parameters} function to combine the LLM and
+   * human arguments into one, by yourself manually.
+   *
+   * > For reference, the propagation means always returning the response even if the
+   * > request is failled, with the response's status code. About detailed concept
+   * > of the propagation, refer to the {@link IPropagation} type.
+   *
+   * @param props Function call properties.
+   * @returns Propagation of the function call.
+   */
+  export const propagate = (
+    props: IProps,
+  ): Promise<IPropagation.IBranch<boolean, number, any>> =>
+    PlainFetcher.propagate(...getFetcherArguments(props)) as Promise<
+      IPropagation.IBranch<boolean, number, any>
+    >;
+
+  const getFetcherArguments = (props: IProps) => {
+    const route = props.function.route();
+    return [
       props.connection,
       {
         method: props.function.method.toUpperCase() as "POST",
@@ -89,7 +120,7 @@ export namespace OpenAiFetcher {
           ? props.arguments[0].body
           : props.arguments[route.parameters.length + (route.query ? 1 : 0)]
         : undefined,
-    );
+    ] as const;
   };
 
   const getKeywordPath = (props: {
