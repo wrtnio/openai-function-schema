@@ -449,60 +449,22 @@ export namespace IOpenAiSchema {
       path: string;
 
       /**
-       * Transform function returning label.
+       * Function returning transformed values using JMESPath expression.
        *
-       * `Prerequisite.Props.label` is a string typed property representing
-       * a function returning the label from the element instance of the
-       * prerequisite API respond array.
+       * `Prerequisite.Props.jmesPath` is a string typed property that extracts desired values
+       * from the prerequisite API response using a JMESPath expression. This property simplifies
+       * and replaces the `label`, `value`, and `array` properties.
        *
-       * The function script must be a string value that can be parsed by
-       * `new Function(string)` statement. Also, its parameter names are
-       * always `elem`, `index` and `array`. Of course, the function's
-       * return type must be always `string`.
+       * JMESPath expressions are used to extract the desired data based on the API response.
+       * The expression must always be a valid JMESPath syntax.
        *
-       * - type: `label: (elem: Element, index: number, array: Element[]) => string`
-       * - example: `return elem.title`
-       * - how to use: `new Function("elem", "index", "array", labelScript)(...)`
+       * - Type: `jmesPath: string`
+       * - Example: `"members[*].data.title"`
+       * - Usage: `jmespath.search(response, jmesPath)`
+       * 
+       * Note: The `label`, `value`, and `array` properties are no longer in use.
        */
-      label: string;
-
-      /**
-       * Transform function returning target value.
-       *
-       * `Prerequisite.Props.value` is a string typed property representing
-       * a function returning the target value from the element instance of
-       * the prerequisite API respond array. If you've defined this `Prerequisite`
-       * type to a `number` type, the returned value must be actual number type.
-       *
-       * The function script must be a string value that can be parsed by
-       * `new Function(string)` statement. Also, its parameter names are always
-       * `elem`, `index` and `array`.
-       *
-       * - type: `value: (elem: Element, index: number, array: Element[]) => Value`
-       * - example: `return elem.no`
-       * - how to use: `new Function("elem", "index", "array", valueScript)(...)`
-       */
-      value: string;
-
-      /**
-       * Transform function returning array instance.
-       *
-       * `Prerequisite.Props.array` is a string typed property representing
-       * a function returning an array instance from the response of the
-       * prerequisite API.
-       *
-       * The function script must be a string value that can be parsed by
-       * `new Function(string)` statement. Also, its parameter name is
-       * always `response`.
-       *
-       * If the prerequisite API responses an array and it is the desired one,
-       * you don't need to specify this property.
-       *
-       * - type: `array: (response: Response) => Elemenet[]`
-       * - example: `return response.members.map(m => m.data)`
-       * - how to use: `new Function("response", arrayScript)(response)`
-       */
-      array?: string;
+      jmesPath: string;
     };
   }
 }
