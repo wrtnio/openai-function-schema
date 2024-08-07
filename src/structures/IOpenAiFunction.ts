@@ -67,6 +67,15 @@ export interface IOpenAiFunction {
   name: string;
 
   /**
+   * Whether the function schema types are strict or not.
+   *
+   * Newly added specification at 2024-08-07.
+   *
+   * @reference https://openai.com/index/introducing-structured-outputs-in-the-api/
+   */
+  strict: true;
+
+  /**
    * List of parameter schemas.
    */
   parameters: IOpenAiSchema[];

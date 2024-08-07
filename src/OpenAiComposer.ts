@@ -165,7 +165,7 @@ export namespace OpenAiComposer {
     const downgraded: IOpenAiSchema = OpenApiV3Downgrader.downgradeSchema({
       original: {},
       downgraded: {},
-    })(escaped);
+    })(escaped) as IOpenAiSchema;
     OpenAiTypeChecker.visit(downgraded, (schema) => {
       if (
         OpenAiTypeChecker.isOneOf(schema) &&
@@ -240,6 +240,7 @@ export namespace OpenAiComposer {
         method: route.method as "get",
         path: route.path,
         name: route.accessor.join("_"),
+        strict: true,
         parameters,
         separated: options.separate
           ? OpenAiSchemaSeparator.parameters({
@@ -248,10 +249,10 @@ export namespace OpenAiComposer {
             })
           : undefined,
         output: output
-          ? OpenApiV3Downgrader.downgradeSchema({
+          ? (OpenApiV3Downgrader.downgradeSchema({
               original: {},
               downgraded: {},
-            })(output)
+            })(output) as IOpenAiSchema)
           : undefined,
         description: (() => {
           if (operation.summary && operation.description) {

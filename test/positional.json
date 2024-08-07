@@ -5,6 +5,7 @@
       "method": "post",
       "path": "/bbs/articles",
       "name": "bbs_articles_post",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -289,6 +290,7 @@
       "method": "patch",
       "path": "/bbs/articles",
       "name": "bbs_articles_patch",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -425,6 +427,7 @@
       "method": "patch",
       "path": "/bbs/articles/abridges",
       "name": "bbs_articles_abridges_patch",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -698,6 +701,7 @@
       "method": "get",
       "path": "/bbs/articles/{id}",
       "name": "bbs_articles_getById",
+      "strict": true,
       "parameters": [
         {
           "type": "string",
@@ -838,6 +842,7 @@
       "method": "put",
       "path": "/bbs/articles/{id}",
       "name": "bbs_articles_putById",
+      "strict": true,
       "parameters": [
         {
           "type": "string",
@@ -1090,6 +1095,7 @@
       "method": "delete",
       "path": "/bbs/articles/{id}",
       "name": "bbs_articles_eraseById",
+      "strict": true,
       "parameters": [
         {
           "type": "string",
@@ -1141,6 +1147,7 @@
       "method": "post",
       "path": "/membership/join",
       "name": "membership_join_post",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -1292,6 +1299,7 @@
       "method": "patch",
       "path": "/membership/login",
       "name": "membership_login_patch",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -1396,6 +1404,7 @@
       "method": "get",
       "path": "/membership/{secret}",
       "name": "membership_getBySecret",
+      "strict": true,
       "parameters": [
         {
           "type": "string",
@@ -1460,6 +1469,7 @@
       "method": "patch",
       "path": "/membership/change",
       "name": "membership_change_patch",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -1640,6 +1650,7 @@
       "method": "patch",
       "path": "/membership/{secret}/change",
       "name": "membership_change_patchBySecret",
+      "strict": true,
       "parameters": [
         {
           "type": "string",
@@ -1804,6 +1815,7 @@
       "method": "post",
       "path": "/multipart",
       "name": "multipart_post",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -1962,6 +1974,7 @@
       "method": "get",
       "path": "/query/typed",
       "name": "query_typed_get",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -2061,6 +2074,7 @@
       "method": "get",
       "path": "/query/nest",
       "name": "query_nest_get",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -2168,6 +2182,7 @@
       "method": "get",
       "path": "/query/individual",
       "name": "query_individual_get",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
@@ -2210,6 +2225,7 @@
       "method": "get",
       "path": "/query/composite/{id}",
       "name": "query_composite_getById",
+      "strict": true,
       "parameters": [
         {
           "type": "string",
@@ -2318,6 +2334,7 @@
       "method": "post",
       "path": "/query/body",
       "name": "query_body_post",
+      "strict": true,
       "parameters": [
         {
           "type": "object",
