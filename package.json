@@ -1,6 +1,6 @@
 {
   "name": "@wrtnio/openai-function-schema",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "OpenAI LLM function schema from OpenAPI (Swagger) document",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -37,11 +37,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nestia/fetcher": "^3.10.0",
-    "@samchon/openapi": "^0.4.3",
+    "@nestia/fetcher": "^3.11.1",
+    "@samchon/openapi": "^0.4.6",
     "commander": "^10.0.0",
     "inquirer": "^8.2.5",
-    "typia": "^6.7.2"
+    "typia": "^6.8.0"
   },
   "devDependencies": {
     "@nestia/core": "^3.10.0",
