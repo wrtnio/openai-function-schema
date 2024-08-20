@@ -77,6 +77,33 @@ export interface IOpenAiFunction {
 
   /**
    * List of parameter schemas.
+   *
+   * If you've configured {@link IOpenAiDocument.IOptions.keyword} (as `true`),
+   * number of {@link IOpenAiFunction.parameters} are always 1 and the first parameter's
+   * type is always {@link IOpenAiSchema.IObject}. The properties' rule is:
+   *
+   * - `pathParameters`: Path parameters of {@link IMigrateRoute.parameters}
+   * - `query`: Query parameter of {@link IMigrateRoute.query}
+   * - `body`: Body parameter of {@link IMigrateRoute.body}
+   *
+   * ```typescript
+   * {
+   *   ...pathParameters,
+   *   query,
+   *   body,
+   * }
+   * ```
+   *
+   * Otherwise, the parameters would be multiple, and the sequence of the parameters
+   * are following below rules:
+   *
+   * ```typescript
+   * [
+   *   ...pathParameters,
+   *   ...(query ? [query] : []),
+   *   ...(body ? [body] : []),
+   * ]
+   * ```
    */
   parameters: IOpenAiSchema[];
 
