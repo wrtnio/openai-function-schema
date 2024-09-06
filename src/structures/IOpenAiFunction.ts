@@ -48,6 +48,7 @@ import { ISwaggerOperation } from "./ISwaggerOperation";
  * ]
  * ```
  *
+ * @reference https://platform.openai.com/docs/guides/function-calling
  * @author Samchon
  */
 export interface IOpenAiFunction {
@@ -63,6 +64,34 @@ export interface IOpenAiFunction {
 
   /**
    * Representative name of the function.
+   *
+   * The `name` is a repsentative name identifying the function in the
+   * {@link IOpenAiDocument}. The `name` value is just composed by joining the
+   * {@link IMigrateRoute.accessor} by underscore `_` character.
+   *
+   * Here is the composition rule of the  {@link IMigrateRoute.accessor}:
+   *
+   * > The `accessor` is composed with the following rules. At first, namespaces
+   * > are composed by static directory names in the {@link path}. Parametric
+   * > symbols represented by `:param` or `{param}` cannot be a part of the
+   * > namespace.
+   * >
+   * > Instead, they would be a part of the function name. The function
+   * > name is composed with the {@link method HTTP method} and parametric symbols
+   * > like `getByParam` or `postByParam`. If there are multiple path parameters,
+   * > they would be concatenated by `And` like `getByParam1AndParam2`.
+   * >
+   * > For refefence, if the {@link operation}'s {@link method} is `delete`, the
+   * > function name would be replaced to `erase` instead of `delete`. It is
+   * > the reason why the `delete` is a reserved keyword in many programming
+   * > languages.
+   * >
+   * > - Example 1
+   * >   - path: `POST /shopping/sellers/sales`
+   * >   - accessor: `shopping.sellers.sales.post`
+   * > - Example 2
+   * >   - endpoint: `GET /shoppings/sellers/sales/:saleId/reviews/:reviewId/comments/:id
+   * >   - accessor: `shoppings.sellers.sales.reviews.getBySaleIdAndReviewIdAndCommentId`
    */
   name: string;
 
@@ -123,6 +152,17 @@ export interface IOpenAiFunction {
 
   /**
    * Description of the function.
+   *
+   * Composed by such rule:
+   *
+   * 1. Starts from the {@link OpenApi.IOperation.summary} paragraph.
+   * 2. The next paragraphs are filled with the {@link OpenApi.IOperation.description}.
+   *    By the way, if the first paragraph of {@link OpenApi.IOperation.description} is same
+   *    with the {@link OpenApi.IOperation.summary}, it would not be duplicated.
+   * 3. Parameters' descriptions are added with `@param` tag.
+   * 4. {@link OpenApi.IOperation.security Security requirements} are added with `@security` tag.
+   * 5. Tag names are added with `@tag` tag.
+   * 6. If {@link OpenApi.IOperation.deprecated}, `@deprecated` tag is added.
    */
   description?: string;
 
