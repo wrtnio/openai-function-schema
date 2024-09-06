@@ -132,6 +132,7 @@ export namespace OpenAiComposer {
       .filter((v): v is IOpenAiFunction => v !== null);
     return {
       openapi: "3.0.3",
+      version: swagger.info?.version,
       functions,
       errors,
       options,

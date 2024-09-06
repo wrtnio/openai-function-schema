@@ -1,5 +1,6 @@
 {
   "openapi": "3.0.3",
+  "version": "0.0.2",
   "functions": [
     {
       "method": "post",

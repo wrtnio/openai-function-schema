@@ -62,6 +62,13 @@ export interface IOpenAiDocument {
   openapi: "3.0.3";
 
   /**
+   * Version of the target document.
+   *
+   * Exactly same with {@link ISwagger.info.version} of the source.
+   */
+  version?: string;
+
+  /**
    * List of function metadata.
    *
    * List of function metadata that can be used for the OpenAI function call.
