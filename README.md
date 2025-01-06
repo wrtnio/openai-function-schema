@@ -1,3 +1,12 @@
+> # Deprecated due to management problem
+>
+> As hard to manage duplicated repos, I've deprecated this project.
+>
+> Instead, utililze below libraries instead.
+>
+> - https://github.com/samchon/openapi
+> - https://github.com/wrtnio/schema
+
 # OpenAI Function Schema
 ![Wrtn Technologies](https://github.com/wrtnio/openai-function-schema/assets/13158709/48ee1578-f7cd-4e64-abd9-8354716ec0c9)
 
